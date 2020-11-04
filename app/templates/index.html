@@ -1,14 +1,51 @@
  <!DOCTYPE html>
 <html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    </head>
 <body>
 
 <h1>My First Heading</h1>
-<p>My first paragraph.</p>
+<p>Tapez http://localhost:5000/query-example?param=<votreValeur> pour tester la méthode get</p>
 <ul>
     <li>{{data.a}}</li>
     <li>{{data.b}}</li>
     <li>{{data.c}}</li>
 </ul>
 
+<form method="POST">
+    Language: <input type="text" name="language"><br>
+    Framework: <input type="text" name="framework"><br>
+    <input type="submit" value="Submit"><br>
+</form>
+
+
+{% if 'language' in data %}
+    <p> Langauge : </p> 
+    <p> {{ data.language }} </p>
+{% endif %}
+
+<script type=text/javascript>
+  $(function() {
+    $('#calculate').bind('click', function() {
+      $.getJSON('/_add_numbers', {
+        a: $('input[name="a"]').val(),
+        b: $('input[name="b"]').val()
+      }, function(data) {
+        $("#result").text(data.result);
+      });
+    });
+  });
+</script>
+
+<h1>jQuery Example</h1>
+<p><input type=text size=5 name=a> +
+   <input type=text size=5 name=b> =
+   <span id=result>?</span>
+<p><button id=calculate>calculate server side </button>
+
+
 </body>
+
+
 </html> 
