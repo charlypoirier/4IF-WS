@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <h1>Mon premier paragraphe</h1>
+        <h1>Moteur de recherche - Tapez un nom d'auteur</h1>
+        <form method="POST">
+            <input type="text" name="strqry"><br>
+            <input type="submit" value="Submit"><br>
+        </form>
+
+
+        {% for item in datalist %}
+            <li>ID: {{ item }}</li>
+        {% endfor %}        
     </body>
 </html>
 

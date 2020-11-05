@@ -1,7 +1,9 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-sparql = SPARQLWrapper("http://dbpedia.org/sparql")
-sparql.setQuery("""
+qry = "Hugo"
+rgxqry='\".*' +qry +'.*\"'
+
+query = """
     PREFIX dbr: <http://dbpedia.org/resource/> 
     PREFIX dbp: <http://dbpedia.org/property/> 
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -9,9 +11,13 @@ sparql.setQuery("""
 
     SELECT ?author WHERE {
         ?author a dbo:Writer .
-        ?author dbo:birthPlace dbr:France
+        Filter(regex(?author,""" + rgxqry + """))
     }
-""")
+"""
+print(query)
+
+sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+sparql.setQuery(query)
 sparql.setReturnFormat(JSON)
 results = sparql.query().convert()
 
