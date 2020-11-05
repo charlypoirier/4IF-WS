@@ -29,3 +29,12 @@ def query_example():
 def about():
     return "All about Flask"
 
+@app.route("/search")
+def search():
+    return render_template("search.html")
+
+
+
+
+
+

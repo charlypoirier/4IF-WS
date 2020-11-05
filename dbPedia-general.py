@@ -16,7 +16,7 @@ sparql.setReturnFormat(JSON)
 results = sparql.query().convert()
 
 for item in results["results"]["bindings"]:
-    print("Auteur : ", item["author"]["value"] ).
+    print("Auteur : ", item["author"]["value"] )
 
 
 
