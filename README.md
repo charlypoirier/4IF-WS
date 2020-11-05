@@ -15,10 +15,17 @@ Une indication visuelle doit apparaître dans votre terminal.
 Tapez ``` deactivate ``` pour sortir de l'environnement virtuel.
 
 ### Lancement  
-Exporter les variables d'environnement suivantes :  
+## Méthode 1
+Une fois l'environnement vrituel activé,
+exporter les variables d'environnement suivantes :  
 ` export FLASK_APP=run.py `  
 ` export FLASK_ENV=development `  
 
 Lancer depuis le répertoire parent de app avec la commande :  
-`flask run`  
+`flask run` 
+
+## Méthode 2
+Une fois l'environnement vrituel activé,
+exécutez le script *runserver* : 
+``` ./runserver ```
 
