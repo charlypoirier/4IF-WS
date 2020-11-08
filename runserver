@@ -1,2 +1,17 @@
 #!/bin/sh
-export FLASK_APP=run.py; export FLASK_ENV=development; flask run
+
+if [[ "$VIRTUAL_ENV" != "" ]]
+    then  
+        export FLASK_APP=run.py; export FLASK_ENV=development; flask run
+else
+    echo "Attention : Aucun environnement virtuel python n'est activé. " 
+    while true; do
+        read -p "Voulez-vous quand même lancer le serveur (O/n) ? " on
+        case $on in
+            [Oo]* ) export FLASK_APP=run.py; export FLASK_ENV=development; flask run; break;;
+            [Nn]* ) exit;;
+            * ) echo "Veuillez répondre oui ou non.";;
+        esac
+    done
+fi
+

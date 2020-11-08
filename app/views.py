@@ -2,7 +2,12 @@ from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-@app.route("/",  methods=['GET', 'POST'])
+@app.route("/")
+def root():
+    return render_template("search.html")
+
+
+@app.route("/index",  methods=['GET', 'POST'])
 def index():
     data = {'a': "hello_world 1", 'b': 'hello_world 2','c':'hello world 3'}
     if request.method == 'POST' :
