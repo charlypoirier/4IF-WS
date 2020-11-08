@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Moteur de recherche - Tapez un nom d'auteur</h1>
+{% extends "base.html" %}
+
+{% block title %} Search {% endblock %}
+
+{% block content %}
+
+        <h1>Search engine - Type the name of a writer</h1>
         <form method="POST">
             <input type="text" name="strqry"><br>
             <input type="submit" value="Submit"><br>
         </form>
 
-
         {% for item in datalist %}
             <li>- {{ item }}</li>
-        {% endfor %}        
-    </body>
-</html>
+        {% endfor %}
 
+{% endblock %}

@@ -18,7 +18,6 @@ def add_numbers():
     b = request.args.get('b', 0, type=int)
     return jsonify(result=a + b)
 
-
 @app.route('/query-example')
 def query_example():
     parameter = request.args.get('param') #if key doesn't exist, returns None
@@ -57,9 +56,3 @@ def search():
              datalist.append(item["author"]["value"])
         print(datalist)
     return render_template("search.html", datalist=datalist)
-
-
-
-
-
-

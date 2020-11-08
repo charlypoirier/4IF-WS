@@ -1,0 +1,33 @@
+<!-- This file it the base of all other templates -->
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        {% block head %}
+            <title>{% block title %}{% endblock %} - Semantic Web</title>
+            <link rel="icon" href="static/favicon.ico"/>
+
+            <!-- jQuery & Bootstrap -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+        {% endblock %}
+    </head>
+
+    <body>
+
+        <div id="content" class="container">
+            {% block content %}
+                <!-- Content from other templates will go here -->
+            {% endblock %}
+        </div>
+
+        <div id="footer">
+            {% block footer %}
+                &copy; Copyright 2020 - Hexanôme 4414, INSA Lyon.
+            {% endblock %}
+        </div>
+
+    </body>
+
+</html>

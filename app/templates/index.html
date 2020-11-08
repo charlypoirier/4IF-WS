@@ -1,53 +1,48 @@
- <!DOCTYPE html>
-<html>
-    <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    </head>
-<body>
+{% extends "base.html" %}
 
-<h1>My First Heading</h1>
-<p>Tapez http://localhost:5000/query-example?param=<votreValeur> pour tester la méthode get</p>
-<a href="/search"> page de recherche</a>
-<ul>
-    <li>{{data.a}}</li>
-    <li>{{data.b}}</li>
-    <li>{{data.c}}</li>
-</ul>
+{% block title %} Index {% endblock %}
 
-<form method="POST">
-    Language: <input type="text" name="language"><br>
-    Framework: <input type="text" name="framework"><br>
-    <input type="submit" value="Submit"><br>
-</form>
+{% block content %}
 
+    <h1>My First Heading</h1>
+    <p>Tapez http://localhost:5000/query-example?param=<votreValeur> pour tester la méthode get</p>
+    <a href="/search"> Search engine</a>
+    <ul>
+        <li>{{data.a}}</li>
+        <li>{{data.b}}</li>
+        <li>{{data.c}}</li>
+    </ul>
 
+    <form method="POST">
+        Language: <input type="text" name="language"><br/>
+        Framework: <input type="text" name="framework"><br/>
+        <input type="submit" value="Submit"><br/>
+    </form>
 
-{% if 'language' in data %}
-    <p> Langauge : </p> 
-    <p> {{ data.language }} </p>
-{% endif %}
+    {% if 'language' in data %}
+        <p> Language : </p> 
+        <p> {{ data.language }} </p>
+    {% endif %}
 
-<script type=text/javascript>
-  $(function() {
-    $('#calculate').bind('click', function() {
-      $.getJSON('/_add_numbers', {
-        a: $('input[name="a"]').val(),
-        b: $('input[name="b"]').val()
-      }, function(data) {
-        $("#result").text(data.result);
-      });
-    });
-  });
-</script>
+    <script type=text/javascript>
+        $(function() {
+            $('#calculate').bind('click', function() {
+            $.getJSON('/_add_numbers', {
+                a: $('input[name="a"]').val(),
+                b: $('input[name="b"]').val()
+            }, function(data) {
+                $("#result").text(data.result);
+            });
+            });
+        });
+    </script>
 
-<h1>jQuery Example</h1>
-<p><input type=text size=5 name=a> +
-   <input type=text size=5 name=b> =
-   <span id=result>?</span>
-<p><button id=calculate>calculate server side </button>
+    <h1>jQuery Example</h1>
+    <p>
+        <input type=text size=5 name=a> +
+        <input type=text size=5 name=b> =
+        <span id=result>?</span>
+    </p>
+    <button id=calculate>calculate server side </button>
 
-
-</body>
-
-
-</html> 
+{% endblock %}
