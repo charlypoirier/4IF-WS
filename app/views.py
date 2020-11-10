@@ -1,8 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import hugo_sample_req, generic
-
+from .bnf_requests import hugo_sample_req, generic, getAuteurs
 
 
 @app.route("/")
@@ -65,6 +64,6 @@ def search():
         #results = sparql.query().convert()
         #for item in results["results"]["bindings"]:
         #     datalist.append(item["author"]["value"])
-        datalist = generic(field) 
+        datalist = getAuteurs(field) 
         print(datalist)
     return render_template("search.html", datalist=datalist)

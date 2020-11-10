@@ -28,8 +28,8 @@ def hugo_sample_req():
     return names
 
 
-namesresults = hugo_sample_req()
-print(namesresults)
+#namesresults = hugo_sample_req()
+#print(namesresults)
 
 
 def generic(name):
@@ -60,8 +60,6 @@ def generic(name):
         names.append(result["nom"]["value"])
     return names
 
-namesresults = hugo_sample_req()
-print(namesresults)
 
 # Nombre total d'éditions d'oeuvres d'un auteur
 
@@ -102,7 +100,6 @@ print(namesresults)
 #
 #}
 
-
 # PAGE DBPEDIA
 
 #PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -123,3 +120,39 @@ print(namesresults)
 #FILTER (regex(?nom, "Victor Hugo"))
 #}
 
+
+def getAuteurs(name):
+    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
+    
+    rgxqry = '".* {0}.*"'.format(name)
+    
+    sparql.setQuery("""
+    PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdagroup2elements: <http://rdvocab.info/ElementsGr2/>
+    PREFIX bio: <http://vocab.org/bio/0.1/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT DISTINCT ?nom ?birth ?death ?bio
+    WHERE {
+    ?oeuvre dcterms:creator ?auteur.
+    ?auteur rdf:type foaf:Person ;
+    foaf:name ?nom ;
+    bnf-onto:firstYear ?birth ;
+    bnf-onto:lastYear ?death ;
+    rdagroup2elements:biographicalInformation ?bio.
+    FILTER(regex(?nom, """ + rgxqry + """, "i"))
+    }
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+
+    #for result in results["results"]["bindings"]:
+        #print(result["nom"]["value"], result["bio"]["value"], result["birth"]["value"], result["death"]["value"])
+    return(results["results"]["bindings"])
+
+dictionnaire = getAuteurs("Hugo")
+print(dictionnaire)
