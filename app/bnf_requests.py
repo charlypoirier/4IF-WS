@@ -61,6 +61,39 @@ def generic(name):
     return names
 
 
+def oeuvreSparql(authorName):
+    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
+    
+    rgxqry='\".* ' +authorName +'.*\"'
+    
+    sparql.setQuery("""
+    PREFIX bio: <http://vocab.org/bio/0.1/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT distinct ?oeuvre ?date ?title ?language
+    WHERE {
+    ?oeuvre dcterms:creator ?auteur ;
+            dcterms:date ?date ;
+            dcterms:title ?title ; 
+            dcterms:language ?language .
+    ?auteur foaf:name ?nom.
+    FILTER(regex(?nom,""" + rgxqry + """))
+    }
+    LIMIT 100
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+
+    print(results)
+    oeuvres = []
+    for result in results["results"]["bindings"]:
+        oeuvres.append(result["title"]["value"])
+        oeuvres.append(result["date"]["value"])
+        oeuvres.append(result["language"]["value"])
+        
+    return oeuvres
+
 # Nombre total d'éditions d'oeuvres d'un auteur
 
 #PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
