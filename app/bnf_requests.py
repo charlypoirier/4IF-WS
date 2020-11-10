@@ -61,5 +61,24 @@ def generic(name):
     return names
 
 
+# Nombre total d'éditions d'oeuvres d'un auteur
+
+#PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+#PREFIX dcterms: <http://purl.org/dc/terms/>
+#PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+#PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
+#SELECT (count(*) as ?count)
+#WHERE {
+#?a foaf:focus ?Oeuvre .
+#?Oeuvre dcterms:creator ?auteur .
+#?auteur foaf:name ?nom.
+#?edition rdarelationships:workManifested ?Oeuvre.
+#OPTIONAL{?edition dcterms:date ?date}
+#OPTIONAL{?edition dcterms:title ?titre}
+#OPTIONAL{?edition dcterms:publisher ?editeur}
+#Filter(regex(?nom, "Michel Houellebecq"))
+#} 
+
+
 namesresults = hugo_sample_req()
 print(namesresults)
