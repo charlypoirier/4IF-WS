@@ -16,7 +16,7 @@
     <form method="POST">
         Language: <input type="text" name="language"><br/>
         Framework: <input type="text" name="framework"><br/>
-        <input type="submit" value="Submit"><br/>
+        <input class="btn btn-success" type="submit" value="Submit"><br/>
     </form>
 
     {% if 'language' in data %}
@@ -43,6 +43,6 @@
         <input type=text size=5 name=b> =
         <span id=result>?</span>
     </p>
-    <button id=calculate>calculate server side </button>
+    <button class="btn btn-success" id="calculate">Calculate server-side</button>
 
 {% endblock %}
