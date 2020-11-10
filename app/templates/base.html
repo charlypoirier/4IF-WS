@@ -5,28 +5,32 @@
 
     <head>
         {% block head %}
-            <title>{% block title %}{% endblock %} - Semantic Web</title>
-            <link rel="icon" href="static/favicon.ico"/>
+        <title>{% block title %}{% endblock %} - Semantic Web</title>
+        <link rel="icon" href="static/favicon.ico" />
 
-            <!-- jQuery & Bootstrap -->
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+        <!-- jQuery & Bootstrap -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
         {% endblock %}
     </head>
 
     <body>
 
+        <nav class="navbar navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">Semantic Search Engine</a>
+        </nav><br/>
+
         <div id="content" class="container">
             {% block content %}
-                <!-- Content from other templates will go here -->
+            <!-- Content from other templates will go here -->
             {% endblock %}
         </div>
 
-        <br/>
+        <br />
 
         <div id="footer" class="text-center">
             {% block footer %}
-                &copy; Copyright 2020 - Hexanôme 4414, INSA Lyon.
+            &copy; Copyright 2020 - Hexanôme 4414, INSA Lyon.
             {% endblock %}
         </div>
 
