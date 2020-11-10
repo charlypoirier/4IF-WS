@@ -42,10 +42,11 @@ def generic(name):
     PREFIX dcterms: <http://purl.org/dc/terms/>
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    SELECT distinct ?nom ?auteur ?birth
+    SELECT distinct ?nom ?auteur ?birth ?death
     WHERE {
     ?oeuvre dcterms:creator ?auteur.
     ?auteur bio:birth ?birth ;
+    ?auteur bio:death ? death ;
     foaf:name ?nom.
     FILTER(regex(?nom,""" + rgxqry + """))
     }
