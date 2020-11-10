@@ -1,6 +1,9 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
+from .bnf_requests import hugo_sample_req, generic
+
+
 
 @app.route("/")
 def root():
@@ -37,27 +40,31 @@ def about():
 def search():
     datalist = []
     if request.method == 'POST':
+        print(request.form)
+        field = request.form.get('strqry')
+        print(field)
         # For testing purpose :
-        strqry  = request.form['strqry']
-        rgxqry='\".*' +strqry +'.*\"'
+        #strqry  = request.form['strqry']
+        #rgxqry='\".*' +strqry +'.*\"'
 
-        query = """
-            PREFIX dbr: <http://dbpedia.org/resource/> 
-            PREFIX dbp: <http://dbpedia.org/property/> 
-            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-            PREFIX dbo: <http://dbpedia.org/ontology/>
+        #query = """
+        #    PREFIX dbr: <http://dbpedia.org/resource/> 
+        #    PREFIX dbp: <http://dbpedia.org/property/> 
+        #    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        #    PREFIX dbo: <http://dbpedia.org/ontology/>
 
-            SELECT ?author WHERE {
-                ?author a dbo:Writer .
-                Filter(regex(?author,""" + rgxqry + """))
-            }
-        """
+        #   SELECT ?author WHERE {
+        #        ?author a dbo:Writer .
+        #        Filter(regex(?author,""" + rgxqry + """))
+        #    }
+        #"""
 
-        sparql = SPARQLWrapper("http://dbpedia.org/sparql")
-        sparql.setQuery(query)
-        sparql.setReturnFormat(JSON)
-        results = sparql.query().convert()
-        for item in results["results"]["bindings"]:
-             datalist.append(item["author"]["value"])
+        #sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+        #sparql.setQuery(query)
+        #sparql.setReturnFormat(JSON)
+        #results = sparql.query().convert()
+        #for item in results["results"]["bindings"]:
+        #     datalist.append(item["author"]["value"])
+        datalist = generic(field) 
         print(datalist)
     return render_template("search.html", datalist=datalist)
