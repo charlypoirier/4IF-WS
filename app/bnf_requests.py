@@ -35,7 +35,7 @@ print(namesresults)
 def generic(name):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
-    rgxqry='\".* ' +name +'.*\"'
+    rgxqry='\".*' +name + '.*\"'
     
     sparql.setQuery("""
     PREFIX bio: <http://vocab.org/bio/0.1/>
@@ -47,7 +47,7 @@ def generic(name):
     ?oeuvre dcterms:creator ?auteur.
     ?auteur bio:birth ?birth ;
     foaf:name ?nom.
-    FILTER(regex(?nom,""" + rgxqry + """))
+    FILTER(regex(?nom, """ + rgxqry + """, "i"))
     }
     LIMIT 100
     """)
