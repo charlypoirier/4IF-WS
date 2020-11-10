@@ -12,10 +12,19 @@
                 <input class="form-control" type="text" name="strqry" placeholder="Search books, writers...">
             </div>
             <input class="btn btn-primary" type="submit" value="Submit"><br>
-        </form>
+        </form><br/>
 
-        {% for item in datalist %}
-            <li>- {{ item }}</li>
-        {% endfor %}
+        <div class="card-columns">
+            {% for item in datalist %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Une autre donnée ici</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Consulter</a>
+                    </div>
+                </div><br/>
+            {% endfor %}
+        </div>
 
 {% endblock %}
