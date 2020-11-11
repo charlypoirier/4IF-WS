@@ -188,8 +188,7 @@ def getAuteurs(name):
     
 def getAuthorsDetail(name):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
-    name = name.replace('_', ' ')
-    print(name)
+
     rgxqry = '"{}"'.format(name)
 
     sparql.setQuery("""
@@ -220,13 +219,6 @@ def getAuthorsDetail(name):
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
-    print("COUCOU")
-    print(results)
-    print()
-    print()
-    
-    for result in results["results"]["bindings"]:
-        print(result)
         
     return(results["results"]["bindings"])
 

@@ -50,12 +50,9 @@ def search():
 
 @app.route("/author/<name>")
 def author(name):
+    name = name.replace('_',' ')
     datalist = []
-    print("avant requête")
     datalist = getAuthorsDetail(name)
-    print("après requête")
-    print()
-    print()
     for item in datalist:
         print(item)
-    return render_template("author.html", name = name.replace('_',' '), datalist=datalist)
+    return render_template("author.html", datalist=datalist)
