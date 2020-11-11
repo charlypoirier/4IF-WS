@@ -20,7 +20,7 @@
                         <h5 class="card-title">{{ item["nom"]["value"]}} ( {{item["birth"]["value"]}} - {{item["death"]["value"]}} ) </h5>
                         <h6 class="card-subtitle mb-2 text-muted">  {{item["bio"]["value"] }} </h6>
                         <p class="card-text"></p>
-                        <a href="#" class="card-link">Consulter</a>
+                        <a href="/author/{{item["nom"]["value"].replace(' ','_')}} " class="card-link">Consulter</a>
                     </div>
                 </div><br/>
             {% endfor %}

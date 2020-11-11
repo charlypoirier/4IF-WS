@@ -42,28 +42,12 @@ def search():
         print(request.form)
         field = request.form.get('strqry')
         print(field)
-        # For testing purpose :
-        #strqry  = request.form['strqry']
-        #rgxqry='\".*' +strqry +'.*\"'
-
-        #query = """
-        #    PREFIX dbr: <http://dbpedia.org/resource/> 
-        #    PREFIX dbp: <http://dbpedia.org/property/> 
-        #    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        #    PREFIX dbo: <http://dbpedia.org/ontology/>
-
-        #   SELECT ?author WHERE {
-        #        ?author a dbo:Writer .
-        #        Filter(regex(?author,""" + rgxqry + """))
-        #    }
-        #"""
-
-        #sparql = SPARQLWrapper("http://dbpedia.org/sparql")
-        #sparql.setQuery(query)
-        #sparql.setReturnFormat(JSON)
-        #results = sparql.query().convert()
-        #for item in results["results"]["bindings"]:
-        #     datalist.append(item["author"]["value"])
         datalist = getAuteurs(field) 
-        print(datalist)
+        for item in datalist:
+            print(item)
     return render_template("search.html", datalist=datalist)
+
+
+@app.route("/author/<name>")
+def author(name):
+    return render_template("author.html", name = name.replace('_',' '))
