@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import hugo_sample_req, generic, getAuteurs, getAuthorsDetail
+from .bnf_requests import hugo_sample_req, generic, getAuteurs, getAuthorsDetail, getAuthorsBooks
 
 
 @app.route("/")
@@ -53,6 +53,7 @@ def author(name):
     name = name.replace('_',' ')
     datalist = []
     datalist = getAuthorsDetail(name)
+    datalist.append(getAuthorsBooks(name))
     for item in datalist:
         print(item)
     return render_template("author.html", datalist=datalist)
