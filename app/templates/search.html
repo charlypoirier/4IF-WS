@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %} Search {% endblock %}
+
+{% block content %}
+
+
+        <a href="/index">Back to the index</a>
+        <form action="/search" method="POST">
+            <div class="form-group">
+                <input class="form-control" type="text" name="strqry" placeholder="Search books, writers...">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Submit"><br>
+        </form><br/>
+
+        <div class="card-columns">
+            {% for item in datalist %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item["nom"]["value"]}} ( {{item["birth"]["value"]}} - {{item["death"]["value"]}} ) </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">  {{item["bio"]["value"] }} </h6>
+                        <p class="card-text"></p>
+                        <a href="/author/{{item["nom"]["value"].replace(' ','_')}} " class="card-link">Consulter</a>
+                    </div>
+                </div><br/>
+            {% endfor %}
+        </div>
+
+{% endblock %}
