@@ -231,7 +231,7 @@ def getAuthorsBooks(authorName):
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT MIN(?auteur) as ?auteur MIN(?titre) as ?titre ?resume MIN(?langue) as ?langue MIN(?genre) as ?genre MIN(?publicateur) as ?publicateur MIN(?image) as ?image MIN(?oeuvresDerivees) as ?oeuvresDerivees WHERE {
+        SELECT MIN(?auteur) as ?auteur MIN(?titre) as ?titre ?resume MIN(?langue) as ?langue MIN(?genre) as ?genre MIN(?publicateur) as ?publicateur MIN(?image) as ?image WHERE {
             ?auteur rdf:type foaf:Person ;
             foaf:name ?nom.
             ?oeuvre dbo:author ?auteur.
@@ -244,7 +244,6 @@ def getAuthorsBooks(authorName):
             OPTIONAL{ ?oeuvre dbo:language ?langue }
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            OPTIONAL{ ?oeuvresDerivees dbo:basedOn ?oeuvre }
             FILTER(regex(?nom, """ + rgxqry + """))
             FILTER(lang(?resume) = 'en')
         } GROUP BY ?resume
