@@ -157,7 +157,7 @@ def oeuvreSparql(authorName):
 def getAuteurs(name):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
-    rgxqry = '".* {0}.*"'.format(name)
+    rgxqry = '".*{0}.*"'.format(name)
     
     sparql.setQuery("""
         PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
