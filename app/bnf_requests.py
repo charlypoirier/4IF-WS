@@ -154,10 +154,10 @@ def oeuvreSparql(authorName):
 #}
 
 
-def getAuteurs(name):
+def getAuteurs(authorName):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
-    rgxqry = '".*{0}.*"'.format(name)
+    rgxqry = '".*{0}.*"'.format(authorName)
     
     sparql.setQuery("""
         PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
@@ -186,16 +186,16 @@ def getAuteurs(name):
     return(results["results"]["bindings"])
     
     
-def getAuthorsDetail(name):
+def getAuthorsDetail(authorName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
-    rgxqry = '"{}"'.format(name)
+    rgxqry = '"{}"'.format(authorName)
 
     sparql.setQuery("""
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT ?auteur ?nom ?bio ?school ?bDate ?bPlace ?dDate ?dPlace ?bName ?gender ?genre ?movement ?nationality ?occupation ?depiction 
+        SELECT ?auteur ?nom ?bio ?school ?bDate ?bPlace ?dDate ?dPlace ?bName ?gender ?genre ?movement ?nationality ?occupation ?image 
         WHERE {
         ?auteur rdf:type foaf:Person ;
         foaf:name ?nom.
@@ -211,7 +211,7 @@ def getAuthorsDetail(name):
         OPTIONAL{ ?auteur dbo:nationality ?nationality }
         OPTIONAL{ ?auteur dbp:nationality ?nationality }
         OPTIONAL{ ?auteur dbp:occupation ?occupation }
-        OPTIONAL{ ?auteur foaf:depiction ?depiction }
+        OPTIONAL{ ?auteur foaf:depiction ?image }
         OPTIONAL{ ?auteur dbo:abstract ?bio }
         FILTER(regex(?nom, """ + rgxqry + """, "i"))
         } 
@@ -221,4 +221,67 @@ def getAuthorsDetail(name):
     results = sparql.query().convert()
         
     return(results["results"]["bindings"])
+
+def getAuthorsBooks(authorName):
+    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+
+    rgxqry = '"{}"'.format(authorName)
+
+    sparql.setQuery("""
+        PREFIX dbp: <http://dbpedia.org/property/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT MIN(?auteur) as ?auteur MIN(?titre) as ?titre ?resume MIN(?langue) as ?langue MIN(?genre) as ?genre MIN(?publicateur) as ?publicateur MIN(?image) as ?image MIN(?oeuvresDerivees) as ?oeuvresDerivees WHERE {
+            ?auteur rdf:type foaf:Person ;
+            foaf:name ?nom.
+            ?oeuvre dbo:author ?auteur.
+            OPTIONAL { ?oeuvre dbp:title ?titre }
+            OPTIONAL { ?oeuvre dbp:name ?titre }
+            OPTIONAL { ?oeuvre foaf:name ?titre }
+            OPTIONAL{ ?oeuvre dbo:abstract ?resume }
+            OPTIONAL{ ?oeuvre dbp:genre ?genre }
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
+            OPTIONAL{ ?oeuvre dbo:language ?langue }
+            OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
+            OPTIONAL{ ?oeuvre foaf:depiction ?image }
+            OPTIONAL{ ?oeuvresDerivees dbo:basedOn ?oeuvre }
+            FILTER(regex(?nom, """ + rgxqry + """))
+            FILTER(lang(?resume) = 'en')
+        } GROUP BY ?resume
+        LIMIT 20
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+        
+    return(results["results"]["bindings"])
+    
+def getRelatedWork(workName, authorName):
+    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+
+    workName = '"{}"'.format(workName)
+    authorName = '"{}"'.format(authorName)
+
+
+    sparql.setQuery("""
+        PREFIX dbp: <http://dbpedia.org/property/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT ?nom ?oeuvresDerivees WHERE {
+            ?auteur rdf:type foaf:Person ;
+            foaf:name ?nomAuteur.
+            ?oeuvre dbo:author ?auteur.
+            ?oeuvresDerivees dbo:basedOn ?oeuvre.
+            OPTIONAL { ?oeuvre dbp:name ?nom }
+            OPTIONAL { ?oeuvre foaf:name ?nom }
+            OPTIONAL { ?oeuvre dbp:title ?nom }
+            FILTER(regex(?nom, """ + workName + """))
+            FILTER(regex(?nomAuteur, """ + authorName + """))
+        }
+        LIMIT 20
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+        
+    return(results["results"]["bindings"])
+    
 
