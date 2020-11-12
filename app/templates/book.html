@@ -8,12 +8,12 @@
 {% if "titre" in datalist[0]  %} 
 </br>
 <h1>{{datalist[0]["titre"]["value"]}}</h1>
+{% else  %} 
+<p>Il n'y a malheureusement pas de détails possibles pour {{name}}...</p>
 {% endif %} 
 
 {% if "oeuvre" in datalist[0]  %} 
 <div><a href= {{datalist[0]["oeuvre"]["value"]}}>Show on dbPedia</a></div>
-{% else  %} 
-<p>Il n'y a malheureusement pas de détails possibles pour {{name}}...</p>
 {% endif %}
 
 
@@ -28,9 +28,9 @@
 <div>Author: {{datalist[0]["authorName"]["value"]}}</div>
 {% endif %} 
 
-{% if "Type" in datalist[0]  %} 
+{% if "genreLabel" in datalist[0]  %} 
 </br>
-<div>Genre : {{datalist[0]["genre"]["value"]}} </div>
+<div>Genre : {{datalist[0]["genreLabel"]["value"]}} </div>
 {% endif %}
 
 {% if "resume" in datalist[0]  %} 
@@ -43,4 +43,8 @@
 <div>Language : {{datalist[0]["langue"]["value"]}} </div>
 {% endif %}
 
+{% if "publicateur" in datalist[0]  %} 
+</br>
+<div>Published by : {{datalist[0]["publicateur"]["value"]}} </div>
+{% endif %}
 {% endblock %}
