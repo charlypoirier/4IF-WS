@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
         <a href="/index">Back to the index</a>
         <form action="/search" method="POST">
             <div class="form-group">
@@ -18,9 +17,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ item["nom"]["value"]}} ( {{item["birth"]["value"]}} - {{item["death"]["value"]}} ) </h5>
-                        <h6 class="card-subtitle mb-2 text-muted">  {{item["bio"]["value"] }} </h6>
-                        <p class="card-text"></p>
-                        <a href="/author/{{item["nom"]["value"].replace(' ','_')}}?dMort={{item["death"]["value"]}}" class="card-link">Consulter</a>
+                        <!-- <h6 class="card-subtitle mb-2 text-muted"></h6> -->
+                        <p class="card-text">{{item["bio"]["value"] }}</p>
+                        <a href="/author/{{ item['nom']['value'].replace(' ','_')}}?dMort={{item['death']['value'] }}" class="card-link">Consulter</a>
                     </div>
                 </div><br/>
             {% endfor %}
