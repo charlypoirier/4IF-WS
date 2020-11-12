@@ -169,7 +169,8 @@ def getAuteurs(authorName):
         PREFIX dcterms: <http://purl.org/dc/terms/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-        SELECT DISTINCT ?nom ?birth ?death ?bio
+        PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
+        SELECT DISTINCT ?nom ?birth ?death ?bio (count(?edition) as ?count)
         WHERE {
         ?oeuvre dcterms:creator ?auteur.
         ?auteur rdf:type foaf:Person ;
@@ -177,15 +178,20 @@ def getAuteurs(authorName):
         bnf-onto:firstYear ?birth ;
         bnf-onto:lastYear ?death ;
         rdagroup2elements:biographicalInformation ?bio.
+        ?a foaf:focus ?oeuvre .
+        ?edition rdarelationships:workManifested ?oeuvre.
         FILTER(regex(?nom, """ + rgxqry + """, "i"))
         }
+        ORDER BY DESC(?count)
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
 
     return(results["results"]["bindings"])
     
-    
+datalist = getAuteurs("Hugo")
+print(datalist)
+
 def getAuthorsDetail(authorName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
