@@ -195,21 +195,41 @@ def getAuthorsDetail(authorName):
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT ?auteur ?nom ?bio ?school ?bDate ?bPlace ?dDate ?dPlace ?bName ?gender ?genre ?movement ?nationality ?occupation ?image 
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        SELECT ?auteur ?nom ?bio ?school 
+        ?bDate ?bPlace ?dDate ?dPlace ?bName 
+        ?gender ?genre ?movement ?nationality 
+        ?nationality2 ?occupation ?image 
+        
         WHERE {
         ?auteur rdf:type foaf:Person ;
         foaf:name ?nom.
-        OPTIONAL{ ?auteur dbo:almaMater ?school }
+        OPTIONAL{ ?auteur dbo:almaMater ?schoolT.
+                ?schoolT rdfs:label ?school
+                FILTER(LANG(?school) = "" || LANGMATCHES(LANG(?school), "fr"))  }
         OPTIONAL{ ?auteur dbo:birthDate ?bDate }
-        OPTIONAL{ ?auteur dbo:birthPlace ?bPlace }
+        OPTIONAL{ ?auteur dbo:birthPlace ?bPlaceT.
+                  ?bPlaceT rdfs:label ?bPlace
+                  FILTER(LANG(?bPlace) = "" || LANGMATCHES(LANG(?bPlace), "fr"))  }
+        OPTIONAL{ ?auteur dbo:birthDate ?bDate }
         OPTIONAL{ ?auteur dbo:deathDate ?dDate }
-        OPTIONAL{ ?auteur dbo:deathPlace ?dPlace }
+        OPTIONAL{ ?auteur dbo:deathPlace ?dPlaceT.
+                  ?dPlaceT rdfs:label ?dPlace
+                  FILTER(LANG(?dPlace) = "" || LANGMATCHES(LANG(?dPlace), "fr"))  }
         OPTIONAL{ ?auteur dbo:birthName ?bName }
         OPTIONAL{ ?auteur foaf:gender ?gender }
-        OPTIONAL{ ?auteur dbo:genre ?genre }
-        OPTIONAL{ ?auteur dbo:movement ?movement }
-        OPTIONAL{ ?auteur dbo:nationality ?nationality }
-        OPTIONAL{ ?auteur dbp:nationality ?nationality }
+        OPTIONAL{ ?auteur dbo:genre ?genreT.
+                  ?genreT rdfs:label ?genre 
+                  FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
+        OPTIONAL{ ?auteur dbo:movement ?movementT.
+                  ?movementT rdfs:label ?movement 
+                  FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
+        OPTIONAL{ ?auteur dbo:nationality ?nationalityT.
+                  ?nationalityT rdfs:label ?nationality
+                  FILTER(LANG(?nationality) = "" || LANGMATCHES(LANG(?nationality), "fr")) 
+                   }
+        OPTIONAL{ ?auteur dbp:nationality ?nationality2.}
         OPTIONAL{ ?auteur dbp:occupation ?occupation }
         OPTIONAL{ ?auteur foaf:depiction ?image }
         OPTIONAL{ ?auteur dbo:abstract ?bio }
