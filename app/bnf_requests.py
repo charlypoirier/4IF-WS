@@ -346,5 +346,33 @@ def getRelatedWork(workName, authorName):
     results = sparql.query().convert()
         
     return(results["results"]["bindings"])
+   
+
+def getRelatedAuthors(authorName): 
     
+    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+    
+    authorName = '"{}"'.format(authorName)
+    sparql.setQuery("""
+    
+    Select  ?auteur2 (count(?s) as ?compatibilite)
+    WHERE {
+    ?auteur rdf:type dbo:Writer.
+    ?auteur rdfs:label """ + authorName + """@en.
+    ?auteur2 rdf:type dbo:Writer.
+    ?auteur rdf:type ?s.
+    ?auteur2 rdf:type ?s.
+    ?s rdfs:subClassOf yago:Writer110794014
+    FILTER(?auteur != ?auteur2)
+    }
+    Group by ?auteur2 
+    ORDER BY DESC (?compatibilite) 
+    LIMIT 20
+    """
+    ) 
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+        
+    return(results["results"]["bindings"])
+
 
