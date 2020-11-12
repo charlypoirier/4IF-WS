@@ -56,4 +56,4 @@ def author(name):
     datalist.append(getAuthorsBooks(name))
     for item in datalist:
         print(item)
-    return render_template("author.html", datalist=datalist)
+    return render_template("author.html", datalist=datalist, name=name)
