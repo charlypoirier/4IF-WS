@@ -41,19 +41,31 @@ def search():
     if request.method == 'POST':
         print(request.form)
         field = request.form.get('strqry')
+        print("\n\n\n")
         print(field)
+        print("\n\n\n")
         datalist = getAuteurs(field) 
         for item in datalist:
             print(item)
+        print("\n\n\n")
     return render_template("search.html", datalist=datalist)
 
 
 @app.route("/author/<name>")
 def author(name):
+    print(request.form)
     name = name.replace('_',' ')
+    dateMort=""
+    if "dMort" in request.args:
+        dateMort = request.args["dMort"]
+        print("\n\nYes "+name+" date Mort : "+dateMort+"\n\n")
+    else:
+        print("\n\nNo date Mort\n\n")
     datalist = []
-    datalist = getAuthorsDetail(name)
-    datalist.append(getAuthorsBooks(name))
+    datalist = getAuthorsDetail(name, dateMort)
+    """ datalist.append(getAuthorsBooks(name)) """
     for item in datalist:
+        print("\n\nItem!!\n")
         print(item)
+    print("\n\n\n")
     return render_template("author.html", datalist=datalist, name=name)

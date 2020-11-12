@@ -186,8 +186,15 @@ def getAuteurs(authorName):
     return(results["results"]["bindings"])
     
     
-def getAuthorsDetail(authorName):
+def getAuthorsDetail(authorName, dateMort):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+
+    dateMort = '"'+dateMort+'"'
+    print("Pour Mr/Mme "+authorName+", la date de mort est:"+dateMort+":")
+    requestDate=""
+    if dateMort != "":
+        requestDate = """?auteur dbo:deathDate ?date 
+                        FILTER(substr(str(?date),1,4) = """+dateMort+""" )"""
 
     rgxqry = '"{}"'.format(authorName)
 
@@ -205,6 +212,7 @@ def getAuthorsDetail(authorName):
         WHERE {
         ?auteur rdf:type foaf:Person ;
         foaf:name ?nom.
+        """+requestDate+"""
         OPTIONAL{ ?auteur dbo:almaMater ?schoolT.
                 ?schoolT rdfs:label ?school
                 FILTER(LANG(?school) = "" || LANGMATCHES(LANG(?school), "fr"))  }
@@ -224,7 +232,7 @@ def getAuthorsDetail(authorName):
                   FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
         OPTIONAL{ ?auteur dbo:movement ?movementT.
                   ?movementT rdfs:label ?movement 
-                  FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
+                  FILTER(LANG(?movement) = "" || LANGMATCHES(LANG(?movement), "fr"))  }
         OPTIONAL{ ?auteur dbo:nationality ?nationalityT.
                   ?nationalityT rdfs:label ?nationality
                   FILTER(LANG(?nationality) = "" || LANGMATCHES(LANG(?nationality), "fr")) 
