@@ -232,7 +232,8 @@ def getAuthorsDetail(authorName):
         OPTIONAL{ ?auteur dbp:nationality ?nationality2.}
         OPTIONAL{ ?auteur dbp:occupation ?occupation }
         OPTIONAL{ ?auteur foaf:depiction ?image }
-        OPTIONAL{ ?auteur dbo:abstract ?bio }
+        OPTIONAL{ ?auteur dbo:abstract ?bio 
+                FILTER(LANG(?bio) = "" || LANGMATCHES(LANG(?bio), "fr"))}
         FILTER(regex(?nom, """ + rgxqry + """, "i"))
         } 
         LIMIT 1
