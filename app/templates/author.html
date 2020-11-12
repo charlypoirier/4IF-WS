@@ -5,52 +5,51 @@
 
 {% block content %}
 
-    {% if "nom" in datalist[0]  %} 
-        <h1> {{datalist[0]["nom"]["value"]}}</h1>
-    {% else  %} 
-        <p>Il n'y a malheureusement pas de détails possibles pour {{name}}...</p>
+    {% if "nom" in details %}
+        <h1>{{ details["nom"]["value"] }}</h1>
+    {% else  %}
+        <p>Il n'y a malheureusement pas de détails possibles pour <b>{{ name }}</b>...</p>
     {% endif %}
 
-    {% if "image" in datalist[0]  %} 
-        <img src="{{datalist[0]['image']['value']}}" style="width:128px;height:128px;">
-    {% endif %} 
+    {% if "image" in details %}
+        <img src="{{details['image']['value']}}" width="128px" height="128px"/>
+    {% endif %}
 
-    {% if "bio" in datalist[0]  %} 
-        <div>{{datalist[0]["bio"]["value"]}}</div>
-    {% endif %} 
+    {% if "bio" in details %}
+        <div>{{ details["bio"]["value"] }}</div>
+    {% endif %}
 
     <br/>
     <br/>
 
-    {% if ("bDate" in datalist[0] and
-    "dDate" in datalist[0] and
-    "bPlace" in datalist[0] and
-    "dPlace" in datalist[0] ) %} 
-        <div>Né le 
-            {{datalist[0]["bDate"]["value"]}} à
-            {{datalist[0]["bPlace"]["value"]}} et mort le
-            {{datalist[0]["dDate"]["value"]}} à
-            {{datalist[0]["dPlace"]["value"]}}
+    {% if ("bDate" in details and "dDate" in details
+      and "bPlace" in details and "dPlace" in details) %}
+        <div>
+            Né le
+            {{ details["bDate"]["value"] }} à
+            {{ details["bPlace"]["value"] }} et mort le
+            {{ details["dDate"]["value"] }} à
+            {{ details["dPlace"]["value"] }}
         </div>
-    {% endif %} 
+    {% endif %}
 
-    {% if "genre" in datalist[0]  %} 
-        <div>Genre : {{datalist[0]["genre"]["value"]}} </div>
+    {% if "genre" in details %}
+        <div>Genre : {{ details["genre"]["value"] }}</div>
     {% endif %}
-    {% if "movement" in datalist[0]  %} 
-        <div>Mouvement : {{datalist[0]["movement"]["value"]}} </div>
+    {% if "movement" in details %}
+        <div>Mouvement : {{ details["movement"]["value"] }}</div>
     {% endif %}
-    {% if "occupation" in datalist[0]  %} 
-        <div>Profession : {{datalist[0]["occupation"]["value"]}} </div>
+    {% if "occupation" in details %}
+        <div>Profession : {{ details["occupation"]["value"] }}</div>
     {% endif %}
-    {% if "school" in datalist[0]  %} 
-        <div>Formation : {{datalist[0]["school"]["value"]}} </div>
+    {% if "school" in details %}
+        <div>Formation : {{ details["school"]["value"] }}</div>
     {% endif %}
-    {% if "nationality" in datalist[0]  %} 
-        <div>Nationalité : {{datalist[0]["nationality"]["value"]}} </div>
+    {% if "nationality" in details %}
+        <div>Nationalité : {{ details["nationality"]["value"] }}</div>
     {% endif %}
-    {% if "nationality2" in datalist[0]  %} 
-        <div>Nationalité : {{datalist[0]["nationality2"]["value"]}} </div>
+    {% if "nationality2" in details %}
+        <div>Nationalité : {{ details["nationality2"]["value"] }}</div>
     {% endif %}
 
 {% endblock %}
