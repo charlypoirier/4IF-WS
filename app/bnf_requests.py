@@ -247,7 +247,6 @@ def getAuthorsDetail(authorName, dateMort):
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
-
     datalist = results["results"]["bindings"]
     if len(datalist) == 0:
         datalist = [{}]
