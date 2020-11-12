@@ -230,7 +230,7 @@ def getAuthorsDetail(authorName):
                   FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
         OPTIONAL{ ?auteur dbo:movement ?movementT.
                   ?movementT rdfs:label ?movement 
-                  FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
+                  FILTER(LANG(?movement) = "" || LANGMATCHES(LANG(?movement), "fr"))  }
         OPTIONAL{ ?auteur dbo:nationality ?nationalityT.
                   ?nationalityT rdfs:label ?nationality
                   FILTER(LANG(?nationality) = "" || LANGMATCHES(LANG(?nationality), "fr")) 
@@ -275,6 +275,37 @@ def getAuthorsBooks(authorName):
             FILTER(lang(?resume) = 'en')
         } GROUP BY ?resume
         LIMIT 20
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+        
+    return(results["results"]["bindings"])
+
+def getBooksDetail(bookName):
+    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+
+    rgxqry = '"{}"'.format(bookName)
+
+    sparql.setQuery("""
+        PREFIX dbp: <http://dbpedia.org/property/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT ?auteur ?titre ?resume ?langue ?genre ?publicateur ?image WHERE {
+            ?auteur rdf:type foaf:Person.
+            ?oeuvre dbo:author ?auteur.
+            OPTIONAL { ?oeuvre dbp:title ?titre }
+            OPTIONAL { ?oeuvre dbp:name ?titre }
+            OPTIONAL { ?oeuvre foaf:name ?titre }
+            OPTIONAL{ ?oeuvre dbo:abstract ?resume }
+            OPTIONAL{ ?oeuvre dbp:genre ?genre }
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
+            OPTIONAL{ ?oeuvre dbo:language ?langue }
+            OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
+            OPTIONAL{ ?oeuvre foaf:depiction ?image }
+            FILTER(regex(?titre, """ + rgxqry + """))
+            FILTER(lang(?resume) = 'en')
+        } GROUP BY ?resume
+        LIMIT 1
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
