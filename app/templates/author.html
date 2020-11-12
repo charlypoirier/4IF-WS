@@ -7,7 +7,9 @@
 
 {% if "nom" in datalist[0]  %} 
 <h1> {{datalist[0]["nom"]["value"]}}</h1>
-{% endif %} 
+{% else  %} 
+<p>Il n'y a malheureusement pas de détails possibles pour {{name}}...</p>
+{% endif %}
 
 {% if "image" in datalist[0]  %} 
 <img src={{datalist[0]["image"]["value"]}} style="width:128px;height:128px;">
