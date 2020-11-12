@@ -27,9 +27,9 @@
     "bPlace" in datalist[0] and
     "dPlace" in datalist[0] ) %} 
         <div>Né le 
-            {{datalist[0]["bDate"]["value"]}} à
+            {{datalist[0]["bDate"]["value"][2]}}/{{datalist[0]["bDate"]["value"][1]}}/{{datalist[0]["bDate"]["value"][0]}} à
             {{datalist[0]["bPlace"]["value"]}} et mort le
-            {{datalist[0]["dDate"]["value"]}} à
+            {{datalist[0]["dDate"]["value"][2]}}/{{datalist[0]["dDate"]["value"][1]}}/{{datalist[0]["dDate"]["value"][0]}} à
             {{datalist[0]["dPlace"]["value"]}}
         </div>
     {% endif %} 

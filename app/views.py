@@ -63,7 +63,7 @@ def author(name):
         print("\n\nNo date Mort\n\n")
     datalist = []
     datalist = getAuthorsDetail(name, dateMort)
-    """ datalist.append(getAuthorsBooks(name)) """
+    datalist.append(getAuthorsBooks(name))
     for item in datalist:
         print("\n\nItem!!\n")
         print(item)

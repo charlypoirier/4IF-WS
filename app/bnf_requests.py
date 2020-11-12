@@ -252,6 +252,19 @@ def getAuthorsDetail(authorName, dateMort):
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
+    datalist = results["results"]["bindings"][0]
+
+    if "bDate" in datalist:
+        date = datalist["bDate"]["value"].split("-")
+        datalist["bDate"]["value"] = date
+        """ datalist["bMonth"]["value"] = date[1]
+        datalist["bYear"]["value"] = date[0] """
+    else:
+        print("no bDate...")
+
+    if "dDate" in datalist:
+        date = datalist["dDate"]["value"].split("-")
+        datalist["dDate"]["value"] = date
         
     return(results["results"]["bindings"])
 
