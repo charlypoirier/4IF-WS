@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %} Search {% endblock %}
@@ -22,13 +21,12 @@
     <br/>
     <br/>
 
-    {% if ("bDate" in details and "dDate" in details
-      and "bPlace" in details and "dPlace" in details) %}
+    {% if ("bDate" in details and "dDate" in details and "bPlace" in details and "dPlace" in details) %}
         <div>
             Né le
-            {{ details["bDate"]["value"] }} à
+            {{ details["bDate"]["value"][2] }}/{{ details["bDate"]["value"][1] }}/{{ details["bDate"]["value"][0] }} à
             {{ details["bPlace"]["value"] }} et mort le
-            {{ details["dDate"]["value"] }} à
+            {{ details["dDate"]["value"][2] }}/{{ details["dDate"]["value"][1] }}/{{ details["dDate"]["value"][0] }} à
             {{ details["dPlace"]["value"] }}
         </div>
     {% endif %}
@@ -36,18 +34,23 @@
     {% if "genre" in details %}
         <div>Genre : {{ details["genre"]["value"] }}</div>
     {% endif %}
+
     {% if "movement" in details %}
         <div>Mouvement : {{ details["movement"]["value"] }}</div>
     {% endif %}
+
     {% if "occupation" in details %}
         <div>Profession : {{ details["occupation"]["value"] }}</div>
     {% endif %}
+
     {% if "school" in details %}
         <div>Formation : {{ details["school"]["value"] }}</div>
     {% endif %}
+
     {% if "nationality" in details %}
         <div>Nationalité : {{ details["nationality"]["value"] }}</div>
     {% endif %}
+
     {% if "nationality2" in details %}
         <div>Nationalité : {{ details["nationality2"]["value"] }}</div>
     {% endif %}
