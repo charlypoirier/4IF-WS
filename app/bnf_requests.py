@@ -224,7 +224,7 @@ def getAuthorsDetail(authorName):
                   FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
         OPTIONAL{ ?auteur dbo:movement ?movementT.
                   ?movementT rdfs:label ?movement 
-                  FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
+                  FILTER(LANG(?movement) = "" || LANGMATCHES(LANG(?movement), "fr"))  }
         OPTIONAL{ ?auteur dbo:nationality ?nationalityT.
                   ?nationalityT rdfs:label ?nationality
                   FILTER(LANG(?nationality) = "" || LANGMATCHES(LANG(?nationality), "fr")) 
