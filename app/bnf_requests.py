@@ -252,6 +252,19 @@ def getAuthorsDetail(authorName, dateMort):
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
+    datalist = results["results"]["bindings"][0]
+
+    if "bDate" in datalist:
+        date = datalist["bDate"]["value"].split("-")
+        datalist["bDate"]["value"] = date
+        """ datalist["bMonth"]["value"] = date[1]
+        datalist["bYear"]["value"] = date[0] """
+    else:
+        print("no bDate...")
+
+    if "dDate" in datalist:
+        date = datalist["dDate"]["value"].split("-")
+        datalist["dDate"]["value"] = date
         
     return(results["results"]["bindings"])
 
@@ -290,29 +303,33 @@ def getAuthorsBooks(authorName):
 def getBooksDetail(bookName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
-    rgxqry = '"{}"'.format(bookName)
+    rgxqry = '".*{0}.*"'.format(bookName)
 
     sparql.setQuery("""
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT ?auteur ?titre ?resume ?langue ?genre ?publicateur ?image WHERE {
+        SELECT  ?oeuvre ?auteur ?titre ?resume ?langue ?genreLabel ?publicateur ?image WHERE {
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
+            ?auteur dbp:name ?authorName.
+            OPTIONAL { ?auteur foaf:name ?authorName }
             OPTIONAL { ?oeuvre dbp:title ?titre }
             OPTIONAL { ?oeuvre dbp:name ?titre }
             OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume }
-            OPTIONAL{ ?oeuvre dbp:genre ?genre }
+            OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
             OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
-            OPTIONAL{ ?oeuvre dbo:language ?langue }
-            OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
+            OPTIONAL{ ?oeuvre dbo:language ?langueUri.
+                      ?langueUri rdfs:label ?langue. }
+            OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
+                      ?publicateurUri rdfs:label ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(regex(?titre, """ + rgxqry + """))
             FILTER(lang(?resume) = 'en')
         } GROUP BY ?resume
         LIMIT 1
     """)
+    #à ajouter à la requête -> FILTER(regex(?titre, """ + rgxqry + """, "i"))
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
         
