@@ -1,7 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-
-
 def hugo_sample_req():
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     sparql.setQuery("""
@@ -11,10 +9,10 @@ def hugo_sample_req():
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     SELECT distinct ?nom ?auteur ?birth
     WHERE {
-    ?oeuvre dcterms:creator ?auteur.
-    ?auteur bio:birth ?birth ;
-    foaf:name ?nom.
-    FILTER (regex(?nom, ".* Hugo.*"))
+        ?oeuvre dcterms:creator ?auteur.
+        ?auteur bio:birth ?birth ;
+        foaf:name ?nom.
+        FILTER (regex(?nom, ".* Hugo.*"))
     }
     LIMIT 100
     """)
@@ -27,10 +25,8 @@ def hugo_sample_req():
         names.append(result["nom"]["value"])
     return names
 
-
 #namesresults = hugo_sample_req()
 #print(namesresults)
-
 
 def generic(name):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
@@ -44,10 +40,10 @@ def generic(name):
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         SELECT distinct ?nom ?auteur ?birth
         WHERE {
-        ?oeuvre dcterms:creator ?auteur.
-        ?auteur bio:birth ?birth ;
-        foaf:name ?nom.
-        FILTER(regex(?nom, """ + rgxqry + """, "i"))
+            ?oeuvre dcterms:creator ?auteur.
+            ?auteur bio:birth ?birth ;
+            foaf:name ?nom.
+            FILTER(regex(?nom, """ + rgxqry + """, "i"))
         }
         LIMIT 100
     """)
@@ -59,7 +55,6 @@ def generic(name):
     for result in results["results"]["bindings"]:
         names.append(result["nom"]["value"])
     return names
-
 
 def oeuvreSparql(authorName):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
@@ -153,7 +148,7 @@ def oeuvreSparql(authorName):
 #FILTER (regex(?nom, "Victor Hugo"))
 #}
 
-
+# Requête pour obtenir une liste d'auteurs selon des mots-clés
 def getAuteurs(authorName):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
@@ -172,33 +167,34 @@ def getAuteurs(authorName):
         PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
         SELECT DISTINCT ?nom ?birth ?death ?bio (count(?edition) as ?count)
         WHERE {
-        ?oeuvre dcterms:creator ?auteur.
-        ?auteur rdf:type foaf:Person ;
-        foaf:name ?nom ;
-        bnf-onto:firstYear ?birth ;
-        bnf-onto:lastYear ?death ;
-        rdagroup2elements:biographicalInformation ?bio.
-        ?a foaf:focus ?oeuvre .
-        ?edition rdarelationships:workManifested ?oeuvre.
-        FILTER(regex(?nom, """ + rgxqry + """, "i"))
+            ?oeuvre dcterms:creator ?auteur.
+            ?auteur rdf:type foaf:Person ;
+            foaf:name ?nom ;
+            bnf-onto:firstYear ?birth ;
+            bnf-onto:lastYear ?death ;
+            rdagroup2elements:biographicalInformation ?bio.
+            ?a foaf:focus ?oeuvre .
+            ?edition rdarelationships:workManifested ?oeuvre.
+            FILTER(regex(?nom, """ + rgxqry + """, "i"))
         }
         ORDER BY DESC(?count)
+        LIMIT 500
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
 
     return(results["results"]["bindings"])
     
-    
+# Requête pour obtenir les détails d'un auteur
 def getAuthorsDetail(authorName, dateMort):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
     dateMort = '"'+dateMort+'"'
     print("Pour Mr/Mme "+authorName+", la date de mort est:"+dateMort+":")
-    requestDate=""
+    requestDate = ""
     if dateMort != "":
-        requestDate = """?auteur dbo:deathDate ?date 
-                        FILTER(substr(str(?date),1,4) = """+dateMort+""" )"""
+        requestDate = """?auteur dbo:deathDate ?date
+        FILTER(substr(str(?date),1,4) = """+dateMort+""" )"""
 
     rgxqry = '"{}"'.format(authorName)
 
@@ -212,49 +208,66 @@ def getAuthorsDetail(authorName, dateMort):
         ?bDate ?bPlace ?dDate ?dPlace ?bName 
         ?gender ?genre ?movement ?nationality 
         ?nationality2 ?occupation ?image 
-        
         WHERE {
-        ?auteur rdf:type foaf:Person ;
-        foaf:name ?nom.
-        """+requestDate+"""
-        OPTIONAL{ ?auteur dbo:almaMater ?schoolT.
-                ?schoolT rdfs:label ?school
-                FILTER(LANG(?school) = "" || LANGMATCHES(LANG(?school), "fr"))  }
-        OPTIONAL{ ?auteur dbo:birthDate ?bDate }
-        OPTIONAL{ ?auteur dbo:birthPlace ?bPlaceT.
-                  ?bPlaceT rdfs:label ?bPlace
-                  FILTER(LANG(?bPlace) = "" || LANGMATCHES(LANG(?bPlace), "fr"))  }
-        OPTIONAL{ ?auteur dbo:birthDate ?bDate }
-        OPTIONAL{ ?auteur dbo:deathDate ?dDate }
-        OPTIONAL{ ?auteur dbo:deathPlace ?dPlaceT.
-                  ?dPlaceT rdfs:label ?dPlace
-                  FILTER(LANG(?dPlace) = "" || LANGMATCHES(LANG(?dPlace), "fr"))  }
-        OPTIONAL{ ?auteur dbo:birthName ?bName }
-        OPTIONAL{ ?auteur foaf:gender ?gender }
-        OPTIONAL{ ?auteur dbo:genre ?genreT.
-                  ?genreT rdfs:label ?genre 
-                  FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
-        OPTIONAL{ ?auteur dbo:movement ?movementT.
-                  ?movementT rdfs:label ?movement 
-                  FILTER(LANG(?movement) = "" || LANGMATCHES(LANG(?movement), "fr"))  }
-        OPTIONAL{ ?auteur dbo:nationality ?nationalityT.
-                  ?nationalityT rdfs:label ?nationality
-                  FILTER(LANG(?nationality) = "" || LANGMATCHES(LANG(?nationality), "fr")) 
-                   }
-        OPTIONAL{ ?auteur dbp:nationality ?nationality2.}
-        OPTIONAL{ ?auteur dbp:occupation ?occupation }
-        OPTIONAL{ ?auteur foaf:depiction ?image }
-        OPTIONAL{ ?auteur dbo:abstract ?bio 
-                FILTER(LANG(?bio) = "" || LANGMATCHES(LANG(?bio), "fr"))}
-        FILTER(regex(?nom, """ + rgxqry + """, "i"))
+            ?auteur rdf:type foaf:Person ;
+            foaf:name ?nom.
+            """+requestDate+"""
+            OPTIONAL{ ?auteur dbo:almaMater ?schoolT.
+                    ?schoolT rdfs:label ?school
+                    FILTER(LANG(?school) = "" || LANGMATCHES(LANG(?school), "fr"))  }
+            OPTIONAL{ ?auteur dbo:birthDate ?bDate }
+            OPTIONAL{ ?auteur dbo:birthPlace ?bPlaceT.
+                    ?bPlaceT rdfs:label ?bPlace
+                    FILTER(LANG(?bPlace) = "" || LANGMATCHES(LANG(?bPlace), "fr"))  }
+            OPTIONAL{ ?auteur dbo:birthDate ?bDate }
+            OPTIONAL{ ?auteur dbo:deathDate ?dDate }
+            OPTIONAL{ ?auteur dbo:deathPlace ?dPlaceT.
+                    ?dPlaceT rdfs:label ?dPlace
+                    FILTER(LANG(?dPlace) = "" || LANGMATCHES(LANG(?dPlace), "fr"))  }
+            OPTIONAL{ ?auteur dbo:birthName ?bName }
+            OPTIONAL{ ?auteur foaf:gender ?gender }
+            OPTIONAL{ ?auteur dbo:genre ?genreT.
+                    ?genreT rdfs:label ?genre 
+                    FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))  }
+            OPTIONAL{ ?auteur dbo:movement ?movementT.
+                    ?movementT rdfs:label ?movement 
+                    FILTER(LANG(?movement) = "" || LANGMATCHES(LANG(?movement), "fr"))  }
+            OPTIONAL{ ?auteur dbo:nationality ?nationalityT.
+                    ?nationalityT rdfs:label ?nationality
+                    FILTER(LANG(?nationality) = "" || LANGMATCHES(LANG(?nationality), "fr")) 
+                    }
+            OPTIONAL{ ?auteur dbp:nationality ?nationality2.}
+            OPTIONAL{ ?auteur dbp:occupation ?occupation }
+            OPTIONAL{ ?auteur foaf:depiction ?image }
+            OPTIONAL{ ?auteur dbo:abstract ?bio 
+                    FILTER(LANG(?bio) = "" || LANGMATCHES(LANG(?bio), "fr"))}
+            FILTER(regex(?nom, """ + rgxqry + """, "i"))
         } 
         LIMIT 1
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
+    datalist = results["results"]["bindings"]
+    if len(datalist) == 0:
+        datalist = [{}]
+    else:
+        datalist = datalist[0]
+
+    if "bDate" in datalist:
+        date = datalist["bDate"]["value"].split("-")
+        datalist["bDate"]["value"] = date
+        """ datalist["bMonth"]["value"] = date[1]
+        datalist["bYear"]["value"] = date[0] """
+    else:
+        print("no bDate...")
+
+    if "dDate" in datalist:
+        date = datalist["dDate"]["value"].split("-")
+        datalist["dDate"]["value"] = date
         
     return(results["results"]["bindings"])
 
+# Requête pour obtenir la liste des livres d'un auteur 
 def getAuthorsBooks(authorName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
@@ -287,43 +300,48 @@ def getAuthorsBooks(authorName):
         
     return(results["results"]["bindings"])
 
+# Requête pour obtenir les détails d'un livre
 def getBooksDetail(bookName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
-    rgxqry = '"{}"'.format(bookName)
+    rgxqry = '".*{0}.*"'.format(bookName)
 
     sparql.setQuery("""
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT ?auteur ?titre ?resume ?langue ?genre ?publicateur ?image WHERE {
+        SELECT  ?oeuvre ?auteur ?titre ?resume ?langue ?genreLabel ?publicateur ?image WHERE {
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
+            ?auteur dbp:name ?authorName.
+            OPTIONAL { ?auteur foaf:name ?authorName }
             OPTIONAL { ?oeuvre dbp:title ?titre }
             OPTIONAL { ?oeuvre dbp:name ?titre }
             OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume }
-            OPTIONAL{ ?oeuvre dbp:genre ?genre }
+            OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
             OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
-            OPTIONAL{ ?oeuvre dbo:language ?langue }
-            OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
+            OPTIONAL{ ?oeuvre dbo:language ?langueUri.
+                      ?langueUri rdfs:label ?langue. }
+            OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
+                      ?publicateurUri rdfs:label ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(regex(?titre, """ + rgxqry + """))
             FILTER(lang(?resume) = 'en')
         } GROUP BY ?resume
         LIMIT 1
     """)
+    #à ajouter à la requête -> FILTER(regex(?titre, """ + rgxqry + """, "i"))
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
         
     return(results["results"]["bindings"])
     
+# Requête pour obtenir des oeuvres dérivées/similaires
 def getRelatedWork(workName, authorName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
     workName = '"{}"'.format(workName)
     authorName = '"{}"'.format(authorName)
-
 
     sparql.setQuery("""
         PREFIX dbp: <http://dbpedia.org/property/>
@@ -346,5 +364,29 @@ def getRelatedWork(workName, authorName):
     results = sparql.query().convert()
         
     return(results["results"]["bindings"])
+   
+# Requête pour obtenir des auteurs similaires à un auteur
+def getRelatedAuthors(authorName): 
     
-
+    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+    
+    authorName = '"{}"'.format(authorName)
+    sparql.setQuery("""
+        SELECT ?auteur2 (count(?s) as ?compatibilite)
+        WHERE {
+            ?auteur rdf:type dbo:Writer.
+            ?auteur rdfs:label """ + authorName + """@en.
+            ?auteur2 rdf:type dbo:Writer.
+            ?auteur rdf:type ?s.
+            ?auteur2 rdf:type ?s.
+            ?s rdfs:subClassOf yago:Writer110794014
+            FILTER(?auteur != ?auteur2)
+        }
+        GROUP BY ?auteur2 
+        ORDER BY DESC (?compatibilite) 
+        LIMIT 20
+    """) 
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+        
+    return(results["results"]["bindings"])

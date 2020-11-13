@@ -1,46 +1,43 @@
-
 {% extends "base.html" %}
 
-{% block title %} Search {% endblock %}
+{% block title %} Book {% endblock %}
 
 {% block content %}
 
-{% if "titre" in datalist[0]  %} 
-</br>
-<h1>{{datalist[0]["titre"]["value"]}}</h1>
-{% endif %} 
+    {% if "titre" in details %}
+        <br/><h1>{{details["titre"]["value"]}}</h1>
+    {% else  %}
+        <p>Il n'y a malheureusement pas de détails possibles pour <b>{{ name }}</b>...</p>
+    {% endif %}
 
-{% if "oeuvre" in datalist[0]  %} 
-<div><a href= {{datalist[0]["oeuvre"]["value"]}}>Show on dbPedia</a></div>
-{% else  %} 
-<p>Il n'y a malheureusement pas de détails possibles pour {{name}}...</p>
-{% endif %}
+    {% if "oeuvre" in details %}
+        <div>
+            <a href="{{details['oeuvre']['value']}}">Show on dbPedia</a>
+        </div>
+    {% endif %}
 
+    {% if "image" in details %}
+        <br/><img src="{{details['image']['value']}}" width="128px" height="128px"/>
+    {% endif %}
 
+    {% if "authorName" in details %}
+        <br/><div>Author: {{ details["authorName"]["value"] }}</div>
+    {% endif %}
 
-{% if "image" in datalist[0]  %} 
-</br>
-<img src={{datalist[0]["image"]["value"]}} style="width:128px;height:128px;">
-{% endif %} 
+    {% if "genreLabel" in details %}
+        <br/><div>Genre : {{ details["genreLabel"]["value"] }}</div>
+    {% endif %}
 
-{% if "authorName" in datalist[0]  %} 
-</br>
-<div>Author: {{datalist[0]["authorName"]["value"]}}</div>
-{% endif %} 
+    {% if "resume" in details %}
+        <br/><div>Resume : {{ details["resume"]["value"] }}</div>
+    {% endif %}
 
-{% if "Type" in datalist[0]  %} 
-</br>
-<div>Genre : {{datalist[0]["genre"]["value"]}} </div>
-{% endif %}
+    {% if "langue" in details %}
+        <br/><div>Language : {{ details["langue"]["value"] }}</div>
+    {% endif %}
 
-{% if "resume" in datalist[0]  %} 
-</br>
-<div>Resume : {{datalist[0]["resume"]["value"]}} </div>
-{% endif %}
-
-{% if "langue" in datalist[0]  %} 
-</br>
-<div>Language : {{datalist[0]["langue"]["value"]}} </div>
-{% endif %}
+    {% if "publicateur" in details %}
+        <br/><div>Published by : {{ details["publicateur"]["value"] }}</div>
+    {% endif %}
 
 {% endblock %}
