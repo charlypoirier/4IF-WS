@@ -57,20 +57,44 @@
 
     </br>
     <h2> Oeuvres de l'auteur</h2>
+    <div class="card-columns">
+        {% for item in books %}
+            <div class="card shadow-sm mb-3 bg-white rounded">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item["titre"]["value"]}}</h5>
+                    {% if "genre" in item %}
+                    <i class="card-text">{{item["genre"]["value"] }}</i><br/>
+                    {% endif %}
+                    <a href="/ABook/{{ item['titre']['value']}}?nom={{name}}" class="card-link">Consulter</a>
+                </div>
+            </div><br/>
+        {% endfor %}
+    </div>
     <ul>
-    {% for item in books  %}
+    <!-- {% for item in books  %}
         <li> <a href = "/ABook/{{ item['titre']['value']}}?nom={{name}}">{{ item["titre"]["value"]}}</a></li>
-    {% endfor %}
+    {% endfor %} -->
     </ul>
 
 
     </br>
     <h2> Auteurs liés</h2>
+    <div class="card-columns">
+        {% for item in relatedAuthors %}
+            <div class="card shadow-sm mb-3 bg-white rounded">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item["nom"]["value"] }}</h5>
+                    <i class="card-text">{{item["occupation"]["value"] }}</i><br/>
+                    <a href="/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'][0]}}" class="card-link">Consulter</a>
+                </div>
+            </div><br/>
+        {% endfor %}
+    </div>
     <ul>
-    {% for item in relatedAuthors  %}
+    <!-- {% for item in relatedAuthors  %}
         <li> <a href = "/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'][0]}}">
             {{ item['nom']['value']}}
         </a></li>
-    {% endfor %}
+    {% endfor %} -->
     </ul>
 {% endblock %}

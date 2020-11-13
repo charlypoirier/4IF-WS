@@ -27,7 +27,6 @@ def author(name):
     if len(results) == 0:
         results = [{}] 
     relatedAuthors = getRelatedAuthors(name) 
-    print(relatedAuthors)
     books = getAuthorsBooks(name)
     return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors, books = books)
 

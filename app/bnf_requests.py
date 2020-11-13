@@ -190,7 +190,7 @@ def getAuthorsDetail(authorName, dateBirth):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
     dateBirth = '"'+dateBirth+'"'
-    print("Pour Mr/Mme "+authorName+", la date de naissance est:"+dateBirth+":")
+    """print("Pour Mr/Mme "+authorName+", la date de naissance est:"+dateBirth+":")"""
     requestDate = ""
     if dateBirth != "":
         requestDate = """?auteur dbo:birthDate ?date
@@ -374,7 +374,7 @@ def getRelatedWork(workName, authorName):
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT ?nom ?oeuvresDerivees WHERE {
+        SELECT ?nom ?oeuvresDerivees ?genre WHERE {
             ?auteur rdf:type foaf:Person ;
             foaf:name ?nomAuteur.
             ?oeuvre dbo:author ?auteur.
@@ -382,6 +382,7 @@ def getRelatedWork(workName, authorName):
             OPTIONAL { ?oeuvre dbp:name ?nom }
             OPTIONAL { ?oeuvre foaf:name ?nom }
             OPTIONAL { ?oeuvre dbp:title ?nom }
+            OPTIONAL { ?oeuvre dbp:genre ?genre }
             FILTER(regex(?nom, """ + workName + """))
             FILTER(regex(?nomAuteur, """ + authorName + """))
         }
@@ -398,7 +399,7 @@ def getRelatedAuthors(authorName):
     
     authorName = '"{}"'.format(authorName)
     sparql.setQuery("""
-        SELECT DISTINCT ?auteur2 ?nom ?birth (count(?s) as ?compatibilite) 
+        SELECT DISTINCT ?auteur2 ?nom ?birth ?occupation (count(?s) as ?compatibilite) 
         WHERE {
             ?auteur rdf:type dbo:Writer.
             ?auteur rdfs:label """ + authorName + """@fr.
@@ -407,6 +408,7 @@ def getRelatedAuthors(authorName):
             ?auteur2 rdf:type ?s.
             ?auteur2 rdfs:label ?nom.
             ?auteur2 dbo:birthDate ?birth.
+            ?auteur2 dbp:occupation ?occupation.
             FILTER(LANG(?nom) = "" || LANGMATCHES(LANG(?nom), "fr"))
             #FILTER LangMatches(lang(?nom), 'fr')
             FILTER(?auteur != ?auteur2)
@@ -433,9 +435,9 @@ def getRelatedAuthors(authorName):
             if (len(auteurs) == taille+1):
                 resultats.append(datalist[i])
         i=i+1
-    print("\nLes auteurs sans doublolns sont:")
+    """ print("\nLes auteurs sans doublolns sont:")
     print(auteurs)
-    print("\n")
+    print("\n") """
 
     return(resultats)
     
