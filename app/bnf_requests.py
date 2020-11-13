@@ -281,18 +281,21 @@ def getAuthorsBooks(authorName):
             ?auteur rdf:type foaf:Person ;
             foaf:name ?nom.
             ?oeuvre dbo:author ?auteur.
-            #?oeuvre rdfs:label ?titre 
-            #FILTER(LANG(?titre) = "" || LANGMATCHES(LANG(?titre), "fr"))
-            OPTIONAL { ?oeuvre dbp:title ?titre }
-            OPTIONAL { ?oeuvre dbp:name ?titre }
-            OPTIONAL { ?oeuvre foaf:name ?titre }
+            ?oeuvre rdfs:label ?titre.
+            FILTER(LANG(?titre) = "" || LANGMATCHES(LANG(?titre), "fr"))
+            #OPTIONAL { ?oeuvre dbp:title ?titre }
+            #OPTIONAL { ?oeuvre dbp:name ?titre }
+            #OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume }
             OPTIONAL{ ?oeuvre dbp:genre ?genre }
-            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
-            OPTIONAL{ ?oeuvre dbo:language ?langue }
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genreUri.
+                        ?genreUri rdfs:label ?genre.
+                        FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr")) }
+            OPTIONAL{ ?oeuvre dbo:language ?langueUri.
+                        ?langueUri rdfs:label ?langue.
+                        FILTER(LANG(?langue) = "" || LANGMATCHES(LANG(?langue), "fr")) }
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-           # FILTER(LANG(?titre) = "" || LANGMATCHES(LANG(?titre), "fr"))
             FILTER(LANG(?resume) = "" || LANGMATCHES(LANG(?resume), "fr"))
             FILTER(regex(?nom, """ + rgxqry + """))
         } GROUP BY ?resume
@@ -308,7 +311,8 @@ def getBooksDetail(bookName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
     print("getBookDetail - Recherche du livre "+bookName)
-    rgxqry = '".*{0}.*"'.format(bookName)
+    """ rgxqry = '".*{0}.*"'.format(bookName) """
+    rgxqry = '"{0}"'.format(bookName)
 
     sparql.setQuery("""
         PREFIX dbp: <http://dbpedia.org/property/>
@@ -317,9 +321,10 @@ def getBooksDetail(bookName):
         SELECT  ?oeuvre ?auteur ?titre ?resume ?langue ?genreLabel ?publicateur ?image WHERE {
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
-            ?auteur dbp:name ?authorName.
+            #?auteur rdfs:label ?authorName.
             ?oeuvre rdfs:label ?titre .
-            
+            #?oeuvre rdfs:label """+rgxqry+""" .
+
             OPTIONAL { ?auteur rdfs: ?authorName 
                          FILTER(LANG(?authorName) = "" || LANGMATCHES(LANG(?authorName), "fr"))}
             #OPTIONAL { ?oeuvre dbp:title ?titre }
@@ -339,7 +344,8 @@ def getBooksDetail(bookName):
                       ?publicateurUri rdfs:label ?publicateur 
                       FILTER(LANG(?publicateur) = "" || LANGMATCHES(LANG(?publicateur), "fr"))}
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
+            #FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
+            FILTER((str(?titre) = """ + rgxqry + """))
         } GROUP BY ?resume
         LIMIT 1
     """)
