@@ -18,26 +18,28 @@
 
     {% if "image" in details %}
         <br/><img src="{{details['image']['value']}}" width="128px" height="128px"/>
-    {% endif %}
+        <br/>
+        {% endif %}
 
     {% if "authorName" in details %}
         <br/><div>Author: {{ details["authorName"]["value"] }}</div>
     {% endif %}
 
-    {% if "genreLabel" in details %}
-        <br/><div>Genre : {{ details["genreLabel"]["value"] }}</div>
-    {% endif %}
-
-    {% if "resume" in details %}
-        <br/><div>Resume : {{ details["resume"]["value"] }}</div>
+    {% if "genre" in details %}
+        <br/><div>Genre : {{ details["genre"]["value"] }}</div>
     {% endif %}
 
     {% if "langue" in details %}
         <br/><div>Language : {{ details["langue"]["value"] }}</div>
     {% endif %}
 
+    {% if "resume" in details %}
+        <br/><div>Resume : {{ details["resume"]["value"] }}</div>
+    {% endif %}
+
     {% if "publicateur" in details %}
         <br/><div>Published by : {{ details["publicateur"]["value"] }}</div>
     {% endif %}
-
+    
+    
 {% endblock %}

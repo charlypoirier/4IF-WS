@@ -34,7 +34,7 @@ def author(name):
 # Page de détails d'un livre
 @app.route("/book")
 def book():
-    name = "la peste"
+    name = "harry potter"
     name = name.replace('_', ' ')
     results = getBooksDetail(name)
     print(results)

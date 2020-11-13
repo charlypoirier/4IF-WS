@@ -310,14 +310,19 @@ def getBooksDetail(bookName):
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT  ?oeuvre ?auteur ?titre ?authorName ?image ?langue WHERE{
+        PREFIX dbpedia2: <http://dbpedia.org/property/>
+        SELECT  ?oeuvre ?auteur ?titre ?authorName ?image ?langue ?genre ?wikiUrl ?resume WHERE{
             ?auteur a foaf:Person.
             ?oeuvre dbo:author ?auteur.
-            ?oeuvre rdfs:label ?titre .   FILTER(regex(?titre, ".*la peste.*", "i") && lang(?titre) = 'fr').
+            ?oeuvre rdfs:label ?titre .   FILTER(regex(?titre, """ + rgxqry +""", "i") && lang(?titre) = 'fr').
             OPTIONAL { ?auteur foaf:name ?authorName.  }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            OPTIONAL{ ?auteur dbo:language ?langueUri.
-                      ?langueUri rdfs:label ?langue. }
+            OPTIONAL{ ?oeuvre dbpedia2:country ?langue }
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genreUri .
+                      ?genreUri rdfs:label ?genre.
+                      FILTER(lang(?genre) = 'en') }
+            OPTIONAL{ ?oeuvre rdfs:comment ?resume.  FILTER(lang(?resume) = 'en') }
+            OPTIONAL{ ?oeuvre foaf:primaryTopic ?wikiUrl}
         }
         LIMIT 1
     """)
