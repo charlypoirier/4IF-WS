@@ -4,12 +4,24 @@
 
 {% block content %}
 
-    <form action="/search" method="POST">
-        <div class="text-center">
-            <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search writers, books...">
-            <input class="btn btn-primary" type="submit" value="Search!">
+    <div class="row">
+        <div class="col">
+            <form action="/search" method="POST">
+                <div class="text-center">
+                    <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search writers">
+                    <input class="btn btn-primary" type="submit" value="Search!">
+                </div>
+            </form><br/>
         </div>
-    </form><br/>
+        <div class="col">
+            <form action="/search/books" method="POST">
+                <div class="text-center">
+                    <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search books">
+                    <input class="btn btn-primary" type="submit" value="Search!">
+                </div>
+            </form><br/>
+        </div>
+    </div>
 
     {% if results %}
         <i>{{ results|length }} result(s)</i>
@@ -19,10 +31,17 @@
         {% for item in results %}
             <div class="card shadow-sm mb-3 bg-white rounded">
                 <div class="card-body">
+                    {% if type=="author" %}
                     <h5 class="card-title">{{ item["nom"]["value"] if 'nom' in item else item["fnom"]["value"]}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{item["birth"]["value"]}} - {{  item["death"]["value"] if 'death' in item }}</h6>
                     <i class="card-text">{{item["bio"]["value"] }}</i><br/>
                     <a href="/author/{{ item['nom']['value'].replace(' ','_') if 'nom' in item else item['fnom']['value'].replace(' ','_') }}?dBirth={{item['birth']['value'] }}" class="card-link">Consulter</a>
+                    {% else %}
+                    <h5 class="card-title">{{ item["title"]["value"] }}</h5>
+                    <i class="card-text">{{item["authorName"]["value"] }}</i><br/>
+                    <i class="card-text">{{item["publicationDate"]["value"] }}</i><br/>
+                    <a href="/ABook/{{ item['title']['value'] }}?nom={{item['authorName']['value'] }}" class="card-link">Consulter</a>
+                    {% endif %}
 
                 </div>
             </div><br/>

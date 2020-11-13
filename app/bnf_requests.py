@@ -442,7 +442,7 @@ def getRelatedAuthors(authorName):
     return(resultats)
     
 
-# Requête pour obtenir une liste d'auteurs selon des mots-clés
+# Requête pour obtenir une liste de livres selon des mots-clés
 def getBooks(bookName):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
