@@ -281,17 +281,23 @@ def getAuthorsBooks(authorName):
             ?auteur rdf:type foaf:Person ;
             foaf:name ?nom.
             ?oeuvre dbo:author ?auteur.
-            OPTIONAL { ?oeuvre dbp:title ?titre }
-            OPTIONAL { ?oeuvre dbp:name ?titre }
-            OPTIONAL { ?oeuvre foaf:name ?titre }
+            ?oeuvre rdfs:label ?titre.
+            FILTER(LANG(?titre) = "" || LANGMATCHES(LANG(?titre), "fr"))
+            #OPTIONAL { ?oeuvre dbp:title ?titre }
+            #OPTIONAL { ?oeuvre dbp:name ?titre }
+            #OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume }
             OPTIONAL{ ?oeuvre dbp:genre ?genre }
-            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
-            OPTIONAL{ ?oeuvre dbo:language ?langue }
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genreUri.
+                        ?genreUri rdfs:label ?genre.
+                        FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr")) }
+            OPTIONAL{ ?oeuvre dbo:language ?langueUri.
+                        ?langueUri rdfs:label ?langue.
+                        FILTER(LANG(?langue) = "" || LANGMATCHES(LANG(?langue), "fr")) }
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
+            FILTER(LANG(?resume) = "" || LANGMATCHES(LANG(?resume), "fr"))
             FILTER(regex(?nom, """ + rgxqry + """))
-            FILTER(lang(?resume) = 'en')
         } GROUP BY ?resume
         LIMIT 20
     """)
@@ -305,7 +311,8 @@ def getBooksDetail(bookName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
     print("getBookDetail - Recherche du livre "+bookName)
-    rgxqry = '".*{0}.*"'.format(bookName)
+    """ rgxqry = '".*{0}.*"'.format(bookName) """
+    rgxqry = '"{0}"'.format(bookName)
 
     sparql.setQuery("""
         PREFIX dbp: <http://dbpedia.org/property/>
@@ -314,22 +321,31 @@ def getBooksDetail(bookName):
         SELECT  ?oeuvre ?auteur ?titre ?resume ?langue ?genreLabel ?publicateur ?image WHERE {
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
-            ?auteur dbp:name ?authorName.
+            #?auteur rdfs:label ?authorName.
             ?oeuvre rdfs:label ?titre .
-            OPTIONAL { ?auteur foaf:name ?authorName }
+            #?oeuvre rdfs:label """+rgxqry+""" .
+
+            OPTIONAL { ?auteur rdfs: ?authorName 
+                         FILTER(LANG(?authorName) = "" || LANGMATCHES(LANG(?authorName), "fr"))}
             #OPTIONAL { ?oeuvre dbp:title ?titre }
             #OPTIONAL { ?oeuvre dbp:name ?titre }
             #OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume 
-                    FILTER(lang(?resume) = 'fr')}
-            OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
-            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
+                    FILTER(LANG(?resume) = "" || LANGMATCHES(LANG(?resume), "fr"))}
+            OPTIONAL{ ?oeuvre dbp:genre ?genre . 
+                        ?genre rdfs:label ?genreLabel}
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genreUri.
+                        ?genreUri rdfs:label ?genre
+                        FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))}
             OPTIONAL{ ?oeuvre dbo:language ?langueUri.
-                      ?langueUri rdfs:label ?langue. }
+                      ?langueUri rdfs:label ?langue. 
+                      FILTER(LANG(?langue) = "" || LANGMATCHES(LANG(?langue), "fr"))}
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
-                      ?publicateurUri rdfs:label ?publicateur }
+                      ?publicateurUri rdfs:label ?publicateur 
+                      FILTER(LANG(?publicateur) = "" || LANGMATCHES(LANG(?publicateur), "fr"))}
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
+            #FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
+            FILTER((str(?titre) = """ + rgxqry + """))
         } GROUP BY ?resume
         LIMIT 1
     """)
@@ -374,23 +390,36 @@ def getRelatedAuthors(authorName):
     
     authorName = '"{}"'.format(authorName)
     sparql.setQuery("""
-        SELECT ?auteur2 ?nom (count(?s) as ?compatibilite)
+        SELECT ?auteur2 ?nom ?birth (count(?s) as ?compatibilite)
         WHERE {
             ?auteur rdf:type dbo:Writer.
-            ?auteur rdfs:label """ + authorName + """@en.
+            ?auteur rdfs:label """ + authorName + """@fr.
             ?auteur2 rdf:type dbo:Writer.
             ?auteur rdf:type ?s.
             ?auteur2 rdf:type ?s.
             ?auteur2 rdfs:label ?nom.
-            FILTER(lang(?nom) = 'en')
+            ?auteur2 dbo:birthDate ?birth.
+            FILTER(lang(?nom) = 'fr')
             FILTER(?auteur != ?auteur2)
 
         } 
         ORDER BY DESC (?compatibilite) 
         LIMIT 10
     """) 
+
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()    
+    results = sparql.query().convert() 
+       
+    datalist = results["results"]["bindings"]
+    if len(datalist) == 0:
+        datalist = [{}]
+    else:
+        datalist = datalist[0]
+
+    if "birth" in datalist:
+        date = datalist["birth"]["value"].split("-")
+        datalist["birth"]["value"] = date
+
     return(results["results"]["bindings"])
     
 
@@ -409,7 +438,7 @@ def getBooks(bookName):
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
         
-        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language
+        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language ?sumup
         WHERE {
             ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
 			dcterms:creator ?author ;
@@ -421,6 +450,7 @@ def getBooks(bookName):
             dcterms:publisher ?publisher ;
             dcterms:date ?publicationDate.
             OPTIONAL { ?publication dcterms:description ?pages }
+  			OPTIONAL { ?publication dcterms:abstract ?sumup }
             
             ?author rdf:type foaf:Person ;
             foaf:name ?authorName ;
