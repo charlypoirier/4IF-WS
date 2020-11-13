@@ -56,10 +56,21 @@
     {% endif %}
 
     </br>
+    <h2> Oeuvres de l'auteur</h2>
+    <ul>
+    {% for item in books  %}
+        <li> <a href = "/ABook/{{ item["titre"]["value"]}}">{{ item["titre"]["value"]}}</a></li>
+    {% endfor %}
+    </ul>
+
+
+    </br>
     <h2> Auteurs liés</h2>
     <ul>
     {% for item in relatedAuthors  %}
-        <li> {{ item["nom"]["value"] }}</li>
+        <li> <a href = "/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth=1802">
+            {{ item['nom']['value']}}
+        </a></li>
     {% endfor %}
     </ul>
 {% endblock %}

@@ -24,17 +24,28 @@ def author(name):
     if "dBirth" in request.args:
         dateBirth = request.args["dBirth"]
     results = getAuthorsDetail(name, dateBirth)
-    results.append(getAuthorsBooks(name))
     if len(results) == 0:
         results = [{}]
     relatedAuthors = getRelatedAuthors(name) 
-    print(relatedAuthors)
-    return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors)
+    "print(relatedAuthors)"
+    books = getAuthorsBooks(name)
+    print(books)
+    return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors, books = books)
 
 # Page de détails d'un livre
+@app.route("/ABook/<titre>")
+def bookDetail(titre):
+    name = titre
+    name = name.replace('_', ' ')
+    results = getBooksDetail(name)
+    if len(results) == 0:
+        results = [{}]
+    return render_template("book.html", details=results[0], name=name)
+
+# Page de détails d'un livre - Test
 @app.route("/book")
 def book():
-    name = "la peste"
+    name = "La Peste"
     name = name.replace('_', ' ')
     results = getBooksDetail(name)
     if len(results) == 0:

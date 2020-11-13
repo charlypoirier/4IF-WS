@@ -318,7 +318,8 @@ def getBooksDetail(bookName):
             OPTIONAL { ?oeuvre dbp:title ?titre }
             OPTIONAL { ?oeuvre dbp:name ?titre }
             OPTIONAL { ?oeuvre foaf:name ?titre }
-            OPTIONAL{ ?oeuvre dbo:abstract ?resume }
+            OPTIONAL{ ?oeuvre dbo:abstract ?resume 
+                    FILTER(lang(?resume) = 'fr')}
             OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
             OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
             OPTIONAL{ ?oeuvre dbo:language ?langueUri.
@@ -326,7 +327,7 @@ def getBooksDetail(bookName):
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
                       ?publicateurUri rdfs:label ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(lang(?resume) = 'en')
+            FILTER(regex(?titre, """ + rgxqry + """, "i"))
         } GROUP BY ?resume
         LIMIT 1
     """)
