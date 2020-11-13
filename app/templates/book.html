@@ -21,11 +21,13 @@
     {% endif %}
 
     {% if "authorName" in details %}
-        <br/><div>Author: {{ details["authorName"]["value"] }}</div>
+        <br/><div>Author: <a href = "/author/{{details['authorName']['value']}}?dBirth={{details['authorBirth']['value'][0]}}" >{{ details["authorName"]["value"] }}</a></div>
     {% endif %}
 
     {% if "genreLabel" in details %}
         <br/><div>Genre : {{ details["genreLabel"]["value"] }}</div>
+    {% elif "genre" in details %}
+        <br/><div>Genre : {{ details["genre"]["value"] }}</div>
     {% endif %}
 
     {% if "resume" in details %}

@@ -29,7 +29,7 @@ def author(name):
     relatedAuthors = getRelatedAuthors(name) 
     "print(relatedAuthors)"
     books = getAuthorsBooks(name)
-    print(books)
+    """ print(books) """
     return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors, books = books)
 
 # Page de détails d'un livre

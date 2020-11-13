@@ -80,7 +80,7 @@ def oeuvreSparql(authorName):
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
 
-    print(results)
+    """ print(results) """
     oeuvres = []
     for result in results["results"]["bindings"]:
         oeuvres.append(result["title"]["value"])
@@ -318,22 +318,22 @@ def getBooksDetail(bookName):
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT  ?oeuvre ?auteur ?titre ?resume ?langue ?genreLabel ?publicateur ?image WHERE {
+        SELECT  ?oeuvre ?auteur ?authorName ?authorBirth ?titre ?resume ?langue ?genreLabel ?genre ?publicateur ?image WHERE {
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
-            #?auteur rdfs:label ?authorName.
             ?oeuvre rdfs:label ?titre .
             #?oeuvre rdfs:label """+rgxqry+""" .
 
-            OPTIONAL { ?auteur rdfs: ?authorName 
+            OPTIONAL { ?auteur rdfs:label ?authorName.
                          FILTER(LANG(?authorName) = "" || LANGMATCHES(LANG(?authorName), "fr"))}
+            OPTIONAL { ?auteur dbo:birthDate ?authorBirth.}
             #OPTIONAL { ?oeuvre dbp:title ?titre }
             #OPTIONAL { ?oeuvre dbp:name ?titre }
             #OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume 
                     FILTER(LANG(?resume) = "" || LANGMATCHES(LANG(?resume), "fr"))}
-            OPTIONAL{ ?oeuvre dbp:genre ?genre . 
-                        ?genre rdfs:label ?genreLabel}
+            OPTIONAL{ ?oeuvre dbp:genre ?genreLabel . }
+                        #?genre rdfs:label ?genreLabel}
             OPTIONAL{ ?oeuvre dbo:literaryGenre ?genreUri.
                         ?genreUri rdfs:label ?genre
                         FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))}
@@ -352,6 +352,16 @@ def getBooksDetail(bookName):
     #à ajouter à la requête -> FILTER(regex(?titre, """ + rgxqry + """, "i"))
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
+
+    datalist = results["results"]["bindings"]
+    if len(datalist) == 0:
+        datalist = [{}]
+    else:
+        datalist = datalist[0]
+        
+    if "authorBirth" in datalist:
+        date = datalist["authorBirth"]["value"].split("-")
+        datalist["authorBirth"]["value"] = date
         
     return(results["results"]["bindings"])
     
@@ -502,9 +512,9 @@ def getAuteurs2(authorName):
     results = sparql.query().convert()
     return(results["results"]["bindings"])
 
-print("Test de la seconde méthode get auteur ")
+""" print("Test de la seconde méthode get auteur ")
 r = getAuteurs2('Stendhal')
-print(r)
+print(r) """
 
 #trucs intéressants pour recherche de livres
 
