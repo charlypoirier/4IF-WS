@@ -281,6 +281,8 @@ def getAuthorsBooks(authorName):
             ?auteur rdf:type foaf:Person ;
             foaf:name ?nom.
             ?oeuvre dbo:author ?auteur.
+            #?oeuvre rdfs:label ?titre 
+            #FILTER(LANG(?titre) = "" || LANGMATCHES(LANG(?titre), "fr"))
             OPTIONAL { ?oeuvre dbp:title ?titre }
             OPTIONAL { ?oeuvre dbp:name ?titre }
             OPTIONAL { ?oeuvre foaf:name ?titre }
@@ -290,8 +292,9 @@ def getAuthorsBooks(authorName):
             OPTIONAL{ ?oeuvre dbo:language ?langue }
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
+           # FILTER(LANG(?titre) = "" || LANGMATCHES(LANG(?titre), "fr"))
+            FILTER(LANG(?resume) = "" || LANGMATCHES(LANG(?resume), "fr"))
             FILTER(regex(?nom, """ + rgxqry + """))
-            FILTER(lang(?resume) = 'en')
         } GROUP BY ?resume
         LIMIT 20
     """)
@@ -316,18 +319,25 @@ def getBooksDetail(bookName):
             ?oeuvre dbo:author ?auteur.
             ?auteur dbp:name ?authorName.
             ?oeuvre rdfs:label ?titre .
-            OPTIONAL { ?auteur foaf:name ?authorName }
+            
+            OPTIONAL { ?auteur rdfs: ?authorName 
+                         FILTER(LANG(?authorName) = "" || LANGMATCHES(LANG(?authorName), "fr"))}
             #OPTIONAL { ?oeuvre dbp:title ?titre }
             #OPTIONAL { ?oeuvre dbp:name ?titre }
             #OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume 
-                    FILTER(lang(?resume) = 'fr')}
-            OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
-            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
+                    FILTER(LANG(?resume) = "" || LANGMATCHES(LANG(?resume), "fr"))}
+            OPTIONAL{ ?oeuvre dbp:genre ?genre . 
+                        ?genre rdfs:label ?genreLabel}
+            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genreUri.
+                        ?genreUri rdfs:label ?genre
+                        FILTER(LANG(?genre) = "" || LANGMATCHES(LANG(?genre), "fr"))}
             OPTIONAL{ ?oeuvre dbo:language ?langueUri.
-                      ?langueUri rdfs:label ?langue. }
+                      ?langueUri rdfs:label ?langue. 
+                      FILTER(LANG(?langue) = "" || LANGMATCHES(LANG(?langue), "fr"))}
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
-                      ?publicateurUri rdfs:label ?publicateur }
+                      ?publicateurUri rdfs:label ?publicateur 
+                      FILTER(LANG(?publicateur) = "" || LANGMATCHES(LANG(?publicateur), "fr"))}
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
             FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
         } GROUP BY ?resume
