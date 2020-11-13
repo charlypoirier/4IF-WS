@@ -361,8 +361,7 @@ def getRelatedWork(workName, authorName):
         LIMIT 20
     """)
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-        
+    results = sparql.query().convert()    
     return(results["results"]["bindings"])
    
 # Requête pour obtenir des auteurs similaires à un auteur
@@ -372,21 +371,21 @@ def getRelatedAuthors(authorName):
     
     authorName = '"{}"'.format(authorName)
     sparql.setQuery("""
-        SELECT ?auteur2 (count(?s) as ?compatibilite)
+        SELECT ?auteur2 ?nom (count(?s) as ?compatibilite)
         WHERE {
             ?auteur rdf:type dbo:Writer.
             ?auteur rdfs:label """ + authorName + """@en.
             ?auteur2 rdf:type dbo:Writer.
             ?auteur rdf:type ?s.
             ?auteur2 rdf:type ?s.
-            ?s rdfs:subClassOf yago:Writer110794014
+            ?auteur2 rdfs:label ?nom.
+            FILTER(lang(?nom) = 'en')
             FILTER(?auteur != ?auteur2)
-        }
-        GROUP BY ?auteur2 
+
+        } 
         ORDER BY DESC (?compatibilite) 
-        LIMIT 20
+        LIMIT 10
     """) 
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-        
+    results = sparql.query().convert()    
     return(results["results"]["bindings"])

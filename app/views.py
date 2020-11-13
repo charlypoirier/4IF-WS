@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import hugo_sample_req, generic, getAuteurs, getBooksDetail, getAuthorsDetail, getAuthorsBooks
+from .bnf_requests import hugo_sample_req, generic, getAuteurs, getBooksDetail, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors
 
 # Page principale avec la recherche générique
 @app.route("/")
@@ -27,7 +27,9 @@ def author(name):
     results.append(getAuthorsBooks(name))
     if len(results) == 0:
         results = [{}]
-    return render_template("author.html", details=results[0], name=name)
+    relatedAuthors = getRelatedAuthors(name) 
+    print(relatedAuthors)
+    return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors)
 
 # Page de détails d'un livre
 @app.route("/book")
