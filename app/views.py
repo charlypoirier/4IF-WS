@@ -34,6 +34,7 @@ def book():
     name = "la peste"
     name = name.replace('_', ' ')
     results = getBooksDetail(name)
+    print(results)
     if len(results) == 0:
         results = [{}]
     return render_template("book.html", details=results[0], name=name)

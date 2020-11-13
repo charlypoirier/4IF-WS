@@ -310,27 +310,19 @@ def getBooksDetail(bookName):
         PREFIX dbp: <http://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT  ?oeuvre ?auteur ?titre ?resume ?langue ?genreLabel ?publicateur ?image WHERE {
-            ?auteur rdf:type foaf:Person.
+        SELECT  ?oeuvre ?auteur ?titre ?authorName ?image ?langue WHERE{
+            ?auteur a foaf:Person.
             ?oeuvre dbo:author ?auteur.
-            ?auteur dbp:name ?authorName.
-            OPTIONAL { ?auteur foaf:name ?authorName }
-            OPTIONAL { ?oeuvre dbp:title ?titre }
-            OPTIONAL { ?oeuvre dbp:name ?titre }
-            OPTIONAL { ?oeuvre foaf:name ?titre }
-            OPTIONAL{ ?oeuvre dbo:abstract ?resume }
-            OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
-            OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
-            OPTIONAL{ ?oeuvre dbo:language ?langueUri.
-                      ?langueUri rdfs:label ?langue. }
-            OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
-                      ?publicateurUri rdfs:label ?publicateur }
+            ?oeuvre rdfs:label ?titre .   FILTER(regex(?titre, ".*la peste.*", "i") && lang(?titre) = 'fr').
+            OPTIONAL { ?auteur foaf:name ?authorName.  }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(lang(?resume) = 'en')
-        } GROUP BY ?resume
+            OPTIONAL{ ?auteur dbo:language ?langueUri.
+                      ?langueUri rdfs:label ?langue. }
+        }
         LIMIT 1
     """)
     #à ajouter à la requête -> FILTER(regex(?titre, """ + rgxqry + """, "i"))
+    # FILTER(lang(?resume) = 'en')
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
         
