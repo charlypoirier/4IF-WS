@@ -186,15 +186,15 @@ def getAuteurs(authorName):
     return(results["results"]["bindings"])
     
 # Requête pour obtenir les détails d'un auteur
-def getAuthorsDetail(authorName, dateMort):
+def getAuthorsDetail(authorName, dateBirth):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
-    dateMort = '"'+dateMort+'"'
-    print("Pour Mr/Mme "+authorName+", la date de mort est:"+dateMort+":")
+    dateBirth = '"'+dateBirth+'"'
+    print("Pour Mr/Mme "+authorName+", la date de naissance est:"+dateBirth+":")
     requestDate = ""
-    if dateMort != "":
-        requestDate = """?auteur dbo:deathDate ?date
-        FILTER(substr(str(?date),1,4) = """+dateMort+""" )"""
+    if dateBirth != "":
+        requestDate = """?auteur dbo:birthDate ?date
+        FILTER(substr(str(?date),1,4) = """+dateBirth+""" )"""
 
     rgxqry = '"{}"'.format(authorName)
 
@@ -304,6 +304,7 @@ def getAuthorsBooks(authorName):
 def getBooksDetail(bookName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
+    print("getBookDetail - Recherche du livre "+bookName)
     rgxqry = '".*{0}.*"'.format(bookName)
 
     sparql.setQuery("""
@@ -314,11 +315,13 @@ def getBooksDetail(bookName):
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
             ?auteur dbp:name ?authorName.
+            ?oeuvre rdfs:label ?titre .
             OPTIONAL { ?auteur foaf:name ?authorName }
-            OPTIONAL { ?oeuvre dbp:title ?titre }
-            OPTIONAL { ?oeuvre dbp:name ?titre }
-            OPTIONAL { ?oeuvre foaf:name ?titre }
-            OPTIONAL{ ?oeuvre dbo:abstract ?resume }
+            #OPTIONAL { ?oeuvre dbp:title ?titre }
+            #OPTIONAL { ?oeuvre dbp:name ?titre }
+            #OPTIONAL { ?oeuvre foaf:name ?titre }
+            OPTIONAL{ ?oeuvre dbo:abstract ?resume 
+                    FILTER(lang(?resume) = 'fr')}
             OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
             OPTIONAL{ ?oeuvre dbo:literaryGenre ?genre }
             OPTIONAL{ ?oeuvre dbo:language ?langueUri.
@@ -326,7 +329,7 @@ def getBooksDetail(bookName):
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
                       ?publicateurUri rdfs:label ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(lang(?resume) = 'en')
+            FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
         } GROUP BY ?resume
         LIMIT 1
     """)
@@ -361,8 +364,7 @@ def getRelatedWork(workName, authorName):
         LIMIT 20
     """)
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-        
+    results = sparql.query().convert()    
     return(results["results"]["bindings"])
    
 # Requête pour obtenir des auteurs similaires à un auteur
@@ -372,23 +374,23 @@ def getRelatedAuthors(authorName):
     
     authorName = '"{}"'.format(authorName)
     sparql.setQuery("""
-        SELECT ?auteur2 (count(?s) as ?compatibilite)
+        SELECT ?auteur2 ?nom (count(?s) as ?compatibilite)
         WHERE {
             ?auteur rdf:type dbo:Writer.
             ?auteur rdfs:label """ + authorName + """@en.
             ?auteur2 rdf:type dbo:Writer.
             ?auteur rdf:type ?s.
             ?auteur2 rdf:type ?s.
-            ?s rdfs:subClassOf yago:Writer110794014
+            ?auteur2 rdfs:label ?nom.
+            FILTER(lang(?nom) = 'en')
             FILTER(?auteur != ?auteur2)
-        }
-        GROUP BY ?auteur2 
+
+        } 
         ORDER BY DESC (?compatibilite) 
-        LIMIT 20
+        LIMIT 10
     """) 
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-        
+    results = sparql.query().convert()    
     return(results["results"]["bindings"])
     
 

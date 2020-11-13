@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import hugo_sample_req, generic, getAuteurs, getBooksDetail, getAuthorsDetail, getAuthorsBooks
+from .bnf_requests import hugo_sample_req, generic, getAuteurs, getBooksDetail, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors
 
 # Page principale avec la recherche générique
 @app.route("/")
@@ -20,18 +20,32 @@ def search():
 @app.route("/author/<name>")
 def author(name):
     name = name.replace("_", " ")
-    dateMort = ""
-    if "dMort" in request.args:
-        dateMort = request.args["dMort"]
-    results = getAuthorsDetail(name, dateMort)
+    dateBirth = ""
+    if "dBirth" in request.args:
+        dateBirth = request.args["dBirth"]
+    results = getAuthorsDetail(name, dateBirth)
     if len(results) == 0:
         results = [{}]
-    return render_template("author.html", details=results[0], name=name)
+    relatedAuthors = getRelatedAuthors(name) 
+    "print(relatedAuthors)"
+    books = getAuthorsBooks(name)
+    print(books)
+    return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors, books = books)
 
 # Page de détails d'un livre
+@app.route("/ABook/<titre>")
+def bookDetail(titre):
+    name = titre
+    name = name.replace('_', ' ')
+    results = getBooksDetail(name)
+    if len(results) == 0:
+        results = [{}]
+    return render_template("book.html", details=results[0], name=name)
+
+# Page de détails d'un livre - Test
 @app.route("/book")
 def book():
-    name = "la peste"
+    name = "La Peste"
     name = name.replace('_', ' ')
     results = getBooksDetail(name)
     if len(results) == 0:
