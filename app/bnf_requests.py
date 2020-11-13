@@ -409,7 +409,7 @@ def getBooks(bookName):
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
         
-        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language
+        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language ?sumup
         WHERE {
             ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
 			dcterms:creator ?author ;
@@ -421,6 +421,7 @@ def getBooks(bookName):
             dcterms:publisher ?publisher ;
             dcterms:date ?publicationDate.
             OPTIONAL { ?publication dcterms:description ?pages }
+  			OPTIONAL { ?publication dcterms:abstract ?sumup }
             
             ?author rdf:type foaf:Person ;
             foaf:name ?authorName ;
