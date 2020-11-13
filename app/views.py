@@ -20,10 +20,11 @@ def search():
 @app.route("/author/<name>")
 def author(name):
     name = name.replace("_", " ")
-    dateMort = ""
-    if "dMort" in request.args:
-        dateMort = request.args["dMort"]
-    results = getAuthorsDetail(name, dateMort)
+    dateBirth = ""
+    if "dBirth" in request.args:
+        dateBirth = request.args["dBirth"]
+    results = getAuthorsDetail(name, dateBirth)
+    results.append(getAuthorsBooks(name))
     if len(results) == 0:
         results = [{}]
     return render_template("author.html", details=results[0], name=name)
