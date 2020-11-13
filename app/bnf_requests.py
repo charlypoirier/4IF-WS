@@ -304,6 +304,7 @@ def getAuthorsBooks(authorName):
 def getBooksDetail(bookName):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
+    print("getBookDetail - Recherche du livre "+bookName)
     rgxqry = '".*{0}.*"'.format(bookName)
 
     sparql.setQuery("""
@@ -314,10 +315,11 @@ def getBooksDetail(bookName):
             ?auteur rdf:type foaf:Person.
             ?oeuvre dbo:author ?auteur.
             ?auteur dbp:name ?authorName.
+            ?oeuvre rdfs:label ?titre .
             OPTIONAL { ?auteur foaf:name ?authorName }
-            OPTIONAL { ?oeuvre dbp:title ?titre }
-            OPTIONAL { ?oeuvre dbp:name ?titre }
-            OPTIONAL { ?oeuvre foaf:name ?titre }
+            #OPTIONAL { ?oeuvre dbp:title ?titre }
+            #OPTIONAL { ?oeuvre dbp:name ?titre }
+            #OPTIONAL { ?oeuvre foaf:name ?titre }
             OPTIONAL{ ?oeuvre dbo:abstract ?resume 
                     FILTER(lang(?resume) = 'fr')}
             OPTIONAL{ ?oeuvre dbp:genre ?genre . ?genre rdfs:label ?genreLabel}
@@ -327,7 +329,7 @@ def getBooksDetail(bookName):
             OPTIONAL{ ?oeuvre dbo:publisher ?publicateurUri .  
                       ?publicateurUri rdfs:label ?publicateur }
             OPTIONAL{ ?oeuvre foaf:depiction ?image }
-            FILTER(regex(?titre, """ + rgxqry + """, "i"))
+            FILTER(regex(str(?titre), """ + rgxqry + """, "i"))
         } GROUP BY ?resume
         LIMIT 1
     """)
