@@ -435,7 +435,46 @@ def getBooks(bookName):
 
     return(results["results"]["bindings"])
     
+def getAuteurs2(authorName): 
+    
+    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
+    rgxqry = '".*{0}.*"'.format(authorName)
 
+    sparql.setQuery( """
+        PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX rdagroup2elements: <http://rdvocab.info/ElementsGr2/>
+        PREFIX bio: <http://vocab.org/bio/0.1/>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
+        SELECT ?nom ?fnom ?birth ?death ?bio (count(?edition) as ?relevance)
+        WHERE {
+        	?oeuvre dcterms:creator ?auteur.
+            ?auteur rdf:type foaf:Person.
+            ?auteur bnf-onto:firstYear ?birth.
+            OPTIONAL {?auteur foaf:name ?nom.}
+            OPTIONAL {?auteur foaf:familyName ?fnom.}
+            OPTIONAL {?auteur bnf-onto:lastYear ?death }
+            ?auteur rdagroup2elements:biographicalInformation ?bio. 
+            ?a foaf:focus ?oeuvre .
+            ?edition rdarelationships:workManifested ?oeuvre.
+        
+            FILTER	( regex(?nom, """ +rgxqry + """ , "i") ||  regex(?fnom, """ +rgxqry + """, "i") )
+        }
+        ORDER BY DESC (count(?edition))
+        LIMIT 100
+        """ )
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    return(results["results"]["bindings"])
+
+print("Test de la seconde méthode get auteur ")
+r = getAuteurs2('Stendhal')
+print(r)
 
 #trucs intéressants pour recherche de livres
 

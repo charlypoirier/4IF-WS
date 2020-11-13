@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import hugo_sample_req, generic, getAuteurs, getBooksDetail, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors
+from .bnf_requests import hugo_sample_req, generic, getAuteurs, getBooksDetail, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors, getAuteurs2
 
 # Page principale avec la recherche générique
 @app.route("/")
@@ -13,7 +13,7 @@ def search():
     auteurs = []
     if request.method == "POST":
         query = request.form.get("query")
-        auteurs = getAuteurs(query)
+        auteurs = getAuteurs2(query)
     return render_template("search.html", results=auteurs)
 
 # Page de détails d'un auteur
