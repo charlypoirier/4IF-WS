@@ -256,8 +256,6 @@ def getAuthorsDetail(authorName, dateBirth):
     if "bDate" in datalist:
         date = datalist["bDate"]["value"].split("-")
         datalist["bDate"]["value"] = date
-        """ datalist["bMonth"]["value"] = date[1]
-        datalist["bYear"]["value"] = date[0] """
     else:
         print("no bDate...")
 
@@ -358,7 +356,7 @@ def getBooksDetail(bookName):
         datalist = [{}]
     else:
         datalist = datalist[0]
-        
+
     if "authorBirth" in datalist:
         date = datalist["authorBirth"]["value"].split("-")
         datalist["authorBirth"]["value"] = date
@@ -400,7 +398,7 @@ def getRelatedAuthors(authorName):
     
     authorName = '"{}"'.format(authorName)
     sparql.setQuery("""
-        SELECT ?auteur2 ?nom ?birth (count(?s) as ?compatibilite)
+        SELECT DISTINCT ?auteur2 ?nom ?birth (count(?s) as ?compatibilite) 
         WHERE {
             ?auteur rdf:type dbo:Writer.
             ?auteur rdfs:label """ + authorName + """@fr.
@@ -409,28 +407,37 @@ def getRelatedAuthors(authorName):
             ?auteur2 rdf:type ?s.
             ?auteur2 rdfs:label ?nom.
             ?auteur2 dbo:birthDate ?birth.
-            FILTER(lang(?nom) = 'fr')
+            FILTER(LANG(?nom) = "" || LANGMATCHES(LANG(?nom), "fr"))
+            #FILTER LangMatches(lang(?nom), 'fr')
             FILTER(?auteur != ?auteur2)
 
         } 
         ORDER BY DESC (?compatibilite) 
-        LIMIT 10
+        LIMIT 20
     """) 
 
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert() 
        
     datalist = results["results"]["bindings"]
-    if len(datalist) == 0:
-        datalist = [{}]
-    else:
-        datalist = datalist[0]
 
-    if "birth" in datalist:
-        date = datalist["birth"]["value"].split("-")
-        datalist["birth"]["value"] = date
+    auteurs= set()
+    resultats=[]
+    i=0
+    for auteur in datalist:
+        taille = len(auteurs)
+        if "birth" in datalist[i] and taille <10:
+            date = datalist[i]["birth"]["value"].split("-")
+            datalist[i]["birth"]["value"] = [date[0]]
+            auteurs.add(str(datalist[i]["nom"]["value"])+str(datalist[i]["birth"]["value"]))
+            if (len(auteurs) == taille+1):
+                resultats.append(datalist[i])
+        i=i+1
+    print("\nLes auteurs sans doublolns sont:")
+    print(auteurs)
+    print("\n")
 
-    return(results["results"]["bindings"])
+    return(resultats)
     
 
 # Requête pour obtenir une liste d'auteurs selon des mots-clés

@@ -25,11 +25,10 @@ def author(name):
         dateBirth = request.args["dBirth"]
     results = getAuthorsDetail(name, dateBirth)
     if len(results) == 0:
-        results = [{}]
+        results = [{}] 
     relatedAuthors = getRelatedAuthors(name) 
-    "print(relatedAuthors)"
+    print(relatedAuthors)
     books = getAuthorsBooks(name)
-    """ print(books) """
     return render_template("author.html", details=results[0], name=name, relatedAuthors = relatedAuthors, books = books)
 
 # Page de détails d'un livre
