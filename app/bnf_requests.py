@@ -406,19 +406,26 @@ def getBooks(bookName):
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
         PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
         
-        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?language
+        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language
         WHERE {
-            ?book dcterms:creator ?author ;
+            ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
+			dcterms:creator ?author ;
             rdfs:label ?title ;
-            dcterms:date ?publicationDate ;
-            dcterms:language ?language ;
-            rdaw:P10004 "http://data.bnf.fr/vocabulary/work-form/te".
+            dcterms:date ?publicationDate.
+            OPTIONAL { ?book dcterms:language ?language }
+            
+  			?publication rdam:P30135 ?book ;
+            dcterms:publisher ?publisher ;
+            dcterms:date ?publicationDate.
+            OPTIONAL { ?publication dcterms:description ?pages }
             
             ?author rdf:type foaf:Person ;
             foaf:name ?authorName ;
-            bnf-onto:firstYear ?birth ;
-            bnf-onto:lastYear ?death.
+            bnf-onto:firstYear ?birth.
+            OPTIONAL { ?author bnf-onto:lastYear ?death }
             FILTER(regex(?title, """ + rgxqry + """, "i"))
         }
         LIMIT 50
@@ -433,6 +440,8 @@ def getBooks(bookName):
 #trucs intéressants pour recherche de livres
 
 #genre : Te -> oeuvre textuelle rdaw:P10004 rdf:resource="http://data.bnf.fr/vocabulary/work-form/te"
+# rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
+
 #date de publication -> dcterms:date
 #titre de l'oeuvre -> rdfs:label
 #auteur -> dcterms:creator
