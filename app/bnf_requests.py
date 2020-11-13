@@ -186,15 +186,15 @@ def getAuteurs(authorName):
     return(results["results"]["bindings"])
     
 # Requête pour obtenir les détails d'un auteur
-def getAuthorsDetail(authorName, dateMort):
+def getAuthorsDetail(authorName, dateBirth):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
 
-    dateMort = '"'+dateMort+'"'
-    print("Pour Mr/Mme "+authorName+", la date de mort est:"+dateMort+":")
+    dateBirth = '"'+dateBirth+'"'
+    print("Pour Mr/Mme "+authorName+", la date de naissance est:"+dateBirth+":")
     requestDate = ""
-    if dateMort != "":
-        requestDate = """?auteur dbo:deathDate ?date
-        FILTER(substr(str(?date),1,4) = """+dateMort+""" )"""
+    if dateBirth != "":
+        requestDate = """?auteur dbo:birthDate ?date
+        FILTER(substr(str(?date),1,4) = """+dateBirth+""" )"""
 
     rgxqry = '"{}"'.format(authorName)
 

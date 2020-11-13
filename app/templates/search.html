@@ -22,7 +22,7 @@
                     <h5 class="card-title">{{ item["nom"]["value"]}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{item["birth"]["value"]}} - {{item["death"]["value"]}}</h6>
                     <i class="card-text">{{item["bio"]["value"] }}</i><br/>
-                    <a href="/author/{{ item['nom']['value'].replace(' ','_')}}?dMort={{item['death']['value'] }}" class="card-link">Consulter</a>
+                    <a href="/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'] }}" class="card-link">Consulter</a>
                 </div>
             </div><br/>
         {% endfor %}
