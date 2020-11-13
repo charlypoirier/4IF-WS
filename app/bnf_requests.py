@@ -390,3 +390,48 @@ def getRelatedAuthors(authorName):
     results = sparql.query().convert()
         
     return(results["results"]["bindings"])
+    
+
+# Requête pour obtenir une liste d'auteurs selon des mots-clés
+def getBooks(bookName):
+    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
+    
+    rgxqry = '".*{0}.*"'.format(bookName)
+    
+    sparql.setQuery("""
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?language
+        WHERE {
+            ?book dcterms:creator ?author ;
+            rdfs:label ?title ;
+            dcterms:date ?publicationDate ;
+            dcterms:language ?language.
+            
+            ?author rdf:type foaf:Person ;
+            foaf:name ?authorName ;
+            bnf-onto:firstYear ?birth ;
+            bnf-onto:lastYear ?death.
+            FILTER(regex(?title, """ + rgxqry + """, "i"))
+        }
+        LIMIT 50
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+
+    return(results["results"]["bindings"])
+    
+
+
+#trucs intéressants pour recherche de livres
+
+#genre : Te -> oeuvre textuelle rdaw:P10004 rdf:resource="http://data.bnf.fr/vocabulary/work-form/te"
+#date de publication -> dcterms:date
+#titre de l'oeuvre -> rdfs:label
+#auteur -> dcterms:creator
+#dcterms:language
+#éditeur
