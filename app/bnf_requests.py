@@ -402,17 +402,18 @@ def getBooks(bookName):
     
     sparql.setQuery("""
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
         PREFIX dcterms: <http://purl.org/dc/terms/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+        PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
         
         SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?language
         WHERE {
             ?book dcterms:creator ?author ;
             rdfs:label ?title ;
             dcterms:date ?publicationDate ;
-            dcterms:language ?language.
+            dcterms:language ?language ;
+            rdaw:P10004 "http://data.bnf.fr/vocabulary/work-form/te".
             
             ?author rdf:type foaf:Person ;
             foaf:name ?authorName ;
