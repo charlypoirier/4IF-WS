@@ -374,21 +374,34 @@ def getRelatedAuthors(authorName):
     
     authorName = '"{}"'.format(authorName)
     sparql.setQuery("""
-        SELECT ?auteur2 ?nom (count(?s) as ?compatibilite)
+        SELECT ?auteur2 ?nom ?birth (count(?s) as ?compatibilite)
         WHERE {
             ?auteur rdf:type dbo:Writer.
-            ?auteur rdfs:label """ + authorName + """@en.
+            ?auteur rdfs:label """ + authorName + """@fr.
             ?auteur2 rdf:type dbo:Writer.
             ?auteur rdf:type ?s.
             ?auteur2 rdf:type ?s.
             ?auteur2 rdfs:label ?nom.
-            FILTER(lang(?nom) = 'en')
+            ?auteur2 dbo:birthDate ?birth.
+            FILTER(lang(?nom) = 'fr')
             FILTER(?auteur != ?auteur2)
 
         } 
         ORDER BY DESC (?compatibilite) 
         LIMIT 10
     """) 
+
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()    
+    results = sparql.query().convert() 
+       
+    datalist = results["results"]["bindings"]
+    if len(datalist) == 0:
+        datalist = [{}]
+    else:
+        datalist = datalist[0]
+
+    if "birth" in datalist:
+        date = datalist["birth"]["value"].split("-")
+        datalist["birth"]["value"] = date
+
     return(results["results"]["bindings"])
