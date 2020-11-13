@@ -55,4 +55,11 @@
         <div>Nationalité : {{ details["nationality2"]["value"] }}</div>
     {% endif %}
 
+    </br>
+    <h2> Auteurs liés</h2>
+    <ul>
+    {% for item in relatedAuthors  %}
+        <li> {{ item["nom"]["value"] }}</li>
+    {% endfor %}
+    </ul>
 {% endblock %}
