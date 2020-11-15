@@ -20,6 +20,10 @@
         <br/><img src="{{details['image']['value']}}" width="128px" height="128px"/>
     {% endif %}
 
+    {% if "authorNameBnf" in details %}
+        <br/><div>Auteur : {{ details["authorNameBnf"]["value"] }}</div>
+    {% endif %}
+
     {% if "authorName" in details %}
         <br/><div>Author: <a href = "/author/{{details['authorName']['value']}}?dBirth={{details['authorBirth']['value'][0]}}" >{{ details["authorName"]["value"] }}</a></div>
     {% endif %}
@@ -39,7 +43,11 @@
     {% endif %}
 
     {% if "publicateur" in details %}
-        <br/><div>Publié par by : {{ details["publicateur"]["value"] }}</div>
+        <br/><div>Publié par : {{ details["publicateur"]["value"] }}</div>
+    {% endif %}
+
+    {% if "publicationDate" in details %}
+        <br/><div>Date de publication : {{ details["publicationDate"]["value"] }}</div>
     {% endif %}
 
 {% endblock %}
