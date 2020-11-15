@@ -5,49 +5,62 @@
 {% block content %}
 
     {% if "titre" in details %}
-        <br/><h1>{{details["titre"]["value"]}}</h1>
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+                {{details["titre"]["value"]}}
+                {% if "authorNameBnf" in details %}
+                    (par {{ details["authorNameBnf"]["value"] }})
+                {% endif %}
+                {% if "authorName" in details %}
+                    (by <a href = "/author/{{details['authorName']['value']}}?dBirth={{details['authorBirth']['value'][0]}}">{{ details["authorName"]["value"] }}</a>)
+                {% endif %}
+                {% if "oeuvre" in details %}
+                    <a class="float-right" href="{{details['oeuvre']['value']}}">Show on DBpedia</a>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+
+                {% if "resume" in details %}
+                    <h5 class="card-title">Résumé</h5>
+                    {% if "image" in details %}
+                        <img src="{{details['image']['value']}}" class="rounded m-2 float-right" width="196px"/>
+                    {% endif %}
+                    <i>{{ details["resume"]["value"] }}</i>
+                {% endif %}
+
+                <br/><br/>
+
+                {% if "genreLabel" in details %}
+                    <h5 class="card-title">Genre</h5>
+                    <p>{{ details["genreLabel"]["value"] }}</p>
+                {% elif "genre" in details %}
+                    <h5 class="card-title">Genre</h5>
+                    <p>{{ details["genre"]["value"] }}</p>
+                {% endif %}
+
+                {% if "langue" in details %}
+                    <h5 class="card-title">Langue</h5>
+                    <p>{{ details["langue"]["value"] }}</p>
+                {% endif %}
+
+                {% if "publicateur" in details %}
+                    <h5 class="card-title">Publié par</h5>
+                    <p>{{ details["publicateur"]["value"] }}</p>
+                {% endif %}
+
+                {% if "publicationDate" in details %}
+                <h5 class="card-title">Publié le</h5>
+                    <p>{{ details["publicationDate"]["value"] }}</p>
+                {% endif %}
+                
+            </div>
+        </div>
+
     {% else  %}
         <p>Il n'y a malheureusement pas de détails possibles pour <b>{{ name }}</b>...</p>
-    {% endif %}
-
-    {% if "oeuvre" in details %}
-        <div>
-            <a href="{{details['oeuvre']['value']}}">Show on dbPedia</a>
-        </div>
-    {% endif %}
-
-    {% if "image" in details %}
-        <br/><img src="{{details['image']['value']}}" width="128px" height="128px"/>
-    {% endif %}
-
-    {% if "authorNameBnf" in details %}
-        <br/><div>Auteur : {{ details["authorNameBnf"]["value"] }}</div>
-    {% endif %}
-
-    {% if "authorName" in details %}
-        <br/><div>Author: <a href = "/author/{{details['authorName']['value']}}?dBirth={{details['authorBirth']['value'][0]}}" >{{ details["authorName"]["value"] }}</a></div>
-    {% endif %}
-
-    {% if "genreLabel" in details %}
-        <br/><div>Genre : {{ details["genreLabel"]["value"] }}</div>
-    {% elif "genre" in details %}
-        <br/><div>Genre : {{ details["genre"]["value"] }}</div>
-    {% endif %}
-
-    {% if "resume" in details %}
-        <br/><div>Résumé : {{ details["resume"]["value"] }}</div>
-    {% endif %}
-
-    {% if "langue" in details %}
-        <br/><div>Langage : {{ details["langue"]["value"] }}</div>
-    {% endif %}
-
-    {% if "publicateur" in details %}
-        <br/><div>Publié par : {{ details["publicateur"]["value"] }}</div>
-    {% endif %}
-
-    {% if "publicationDate" in details %}
-        <br/><div>Date de publication : {{ details["publicationDate"]["value"] }}</div>
     {% endif %}
 
 {% endblock %}

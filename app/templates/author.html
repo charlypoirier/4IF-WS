@@ -5,96 +5,110 @@
 {% block content %}
 
     {% if "nom" in details %}
-        <h1>{{ details["nom"]["value"] }}</h1>
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+                {{ details["nom"]["value"] }}
+            </div>
+
+            <div class="card-body">
+
+                {% if "bio" in details %}
+                    <h5 class="card-title">Biographie</h5>
+                    {% if "image" in details %}
+                        <img src="{{details['image']['value']}}" alt="..." class="rounded m-2 float-right" width="196px">
+                    {% endif %}
+                    <i class="card-text">{{ details["bio"]["value"] }}</i>
+                {% endif %}
+
+                <br/><br/>
+
+                {% if ("bDate" in details and "dDate" in details and "bPlace" in details and "dPlace" in details) %}
+                    <h5 class="card-title">Naissance et décès</h5>
+                    <p>
+                        Né le
+                        {{ details["bDate"]["value"][2] }}/{{ details["bDate"]["value"][1] }}/{{ details["bDate"]["value"][0] }} à
+                        {{ details["bPlace"]["value"] }} et mort le
+                        {{ details["dDate"]["value"][2] }}/{{ details["dDate"]["value"][1] }}/{{ details["dDate"]["value"][0] }} à
+                        {{ details["dPlace"]["value"] }}
+                    </p>
+                {% endif %}
+
+                {% if "genre" in details %}
+                    <h5 class="card-title">Genre</h5>
+                    <p>{{ details["genre"]["value"] }}</p>
+                {% endif %}
+
+                {% if "movement" in details %}
+                    <h5 class="card-title">Mouvement</h5>
+                    <p>{{ details["movement"]["value"] }}</p>
+                {% endif %}
+
+                {% if "occupation" in details %}
+                    <h5 class="card-title">Profession</h5>
+                    <p>{{ details["occupation"]["value"] }}</p>
+                {% endif %}
+
+                {% if "school" in details %}
+                    <h5 class="card-title">Formation</h5>
+                    <p>{{ details["school"]["value"] }}</p>
+                {% endif %}
+
+                {% if "nationality" in details %}
+                    <h5 class="card-title">Nationalité</h5>
+                    <p>{{ details["nationality"]["value"] }}</p>
+                {% endif %}
+
+                {% if "nationality2" in details %}
+                    <h5 class="card-title">Nationalité</h5>
+                    <p>{{ details["nationality2"]["value"] }}</p>
+                {% endif %}
+
+                <h5>Œuvres</h5>
+                <ul>
+                    {% for item in books  %}
+                        <li>
+                            <a href = "/ABook/{{ item['titre']['value']}}?nom={{name}}">
+                                {{ item["titre"]["value"]}}
+                            </a>
+                            {% if "genre" in item %}
+                                <i>{{ item["genre"]["value"] }}</i>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+            </div>
+        </div><br/><br/>
+
+        <h4>Auteurs similaires...</h4><br/>
+
+        <div class="card-columns">
+            {% for item in relatedAuthors %}
+                <div class="card shadow-sm mb-3 bg-white rounded">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item["nom"]["value"] }}</h5>
+                        <i class="card-text">{{item["occupation"]["value"] }}</i><br/><br/>
+                        <a href="/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'][0]}}" class="card-link">Consulter</a>
+                    </div>
+                </div><br/>
+            {% endfor %}
+        </div>
+
+        <!-- Autre visuel -->
+        <!-- <ul>
+            {% for item in relatedAuthors  %}
+                <li>
+                    <a href = "/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'][0]}}">
+                        {{ item['nom']['value']}}
+                    </a>
+                    ({{item["occupation"]["value"] }})
+                </li>
+            {% endfor %}
+        </ul> -->
+
     {% else  %}
         <p>Il n'y a malheureusement pas de détails possibles pour <b>{{ name }}</b>...</p>
     {% endif %}
 
-    {% if "image" in details %}
-        <img src="{{details['image']['value']}}" width="128px" height="128px"/>
-    {% endif %}
-
-    {% if "bio" in details %}
-        <div>{{ details["bio"]["value"] }}</div>
-    {% endif %}
-
-    <br/>
-    <br/>
-
-    {% if ("bDate" in details and "dDate" in details and "bPlace" in details and "dPlace" in details) %}
-        <div>
-            Né le
-            {{ details["bDate"]["value"][2] }}/{{ details["bDate"]["value"][1] }}/{{ details["bDate"]["value"][0] }} à
-            {{ details["bPlace"]["value"] }} et mort le
-            {{ details["dDate"]["value"][2] }}/{{ details["dDate"]["value"][1] }}/{{ details["dDate"]["value"][0] }} à
-            {{ details["dPlace"]["value"] }}
-        </div>
-    {% endif %}
-
-    {% if "genre" in details %}
-        <div>Genre : {{ details["genre"]["value"] }}</div>
-    {% endif %}
-
-    {% if "movement" in details %}
-        <div>Mouvement : {{ details["movement"]["value"] }}</div>
-    {% endif %}
-
-    {% if "occupation" in details %}
-        <div>Profession : {{ details["occupation"]["value"] }}</div>
-    {% endif %}
-
-    {% if "school" in details %}
-        <div>Formation : {{ details["school"]["value"] }}</div>
-    {% endif %}
-
-    {% if "nationality" in details %}
-        <div>Nationalité : {{ details["nationality"]["value"] }}</div>
-    {% endif %}
-
-    {% if "nationality2" in details %}
-        <div>Nationalité : {{ details["nationality2"]["value"] }}</div>
-    {% endif %}
-
-    </br>
-    <h2> Oeuvres de l'auteur</h2>
-    <div class="card-columns">
-        {% for item in books %}
-            <div class="card shadow-sm mb-3 bg-white rounded">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item["titre"]["value"]}}</h5>
-                    {% if "genre" in item %}
-                    <i class="card-text">{{item["genre"]["value"] }}</i><br/>
-                    {% endif %}
-                    <a href="/ABook/{{ item['titre']['value']}}?nom={{name}}" class="card-link">Consulter</a>
-                </div>
-            </div><br/>
-        {% endfor %}
-    </div>
-    <ul>
-    <!-- {% for item in books  %}
-        <li> <a href = "/ABook/{{ item['titre']['value']}}?nom={{name}}">{{ item["titre"]["value"]}}</a></li>
-    {% endfor %} -->
-    </ul>
-
-
-    </br>
-    <h2> Auteurs liés</h2>
-    <div class="card-columns">
-        {% for item in relatedAuthors %}
-            <div class="card shadow-sm mb-3 bg-white rounded">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item["nom"]["value"] }}</h5>
-                    <i class="card-text">{{item["occupation"]["value"] }}</i><br/>
-                    <a href="/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'][0]}}" class="card-link">Consulter</a>
-                </div>
-            </div><br/>
-        {% endfor %}
-    </div>
-    <ul>
-    <!-- {% for item in relatedAuthors  %}
-        <li> <a href = "/author/{{ item['nom']['value'].replace(' ','_')}}?dBirth={{item['birth']['value'][0]}}">
-            {{ item['nom']['value']}}
-        </a></li>
-    {% endfor %} -->
-    </ul>
 {% endblock %}
