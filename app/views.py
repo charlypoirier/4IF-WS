@@ -10,20 +10,15 @@ def root():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    auteurs = []
+    results = []
     if request.method == "POST":
+        searchType = request.form.get("searchType")
         query = request.form.get("query")
-        auteurs = getAuteurs2(query)
-    return render_template("search.html", results=auteurs, type="author")
-
-@app.route("/search/books", methods=["GET", "POST"])
-def searchBooks():
-    auteurs = []
-    if request.method == "POST":
-        query = request.form.get("query")
-        livres = getBooks(query)
-        print(livres)
-    return render_template("search.html", results=livres, type="book")
+        if searchType == "author":
+            results = getAuteurs2(query)
+        else:
+            results = getBooks(query)
+    return render_template("search.html", results=results, type=searchType)
 
 # Page de détails d'un auteur
 @app.route("/author/<name>")

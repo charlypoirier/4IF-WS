@@ -4,24 +4,22 @@
 
 {% block content %}
 
-    <div class="row">
-        <div class="col">
-            <form action="/search" method="POST">
-                <div class="text-center">
-                    <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search writers">
-                    <input class="btn btn-primary" type="submit" value="Search!">
-                </div>
-            </form><br/>
+    <form action="/search" method="POST">
+        <div class="text-center">
+            <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search...">
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchType" id="radioAuthors" value="author" checked>
+                <label class="form-check-label" for="radioAuthors">Authors</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchType" id="radioBooks" value="book">
+                <label class="form-check-label" for="radioBooks">Books</label>
+            </div>
+
+            <input class="btn btn-primary" type="submit" value="Search">
         </div>
-        <div class="col">
-            <form action="/search/books" method="POST">
-                <div class="text-center">
-                    <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search books">
-                    <input class="btn btn-primary" type="submit" value="Search!">
-                </div>
-            </form><br/>
-        </div>
-    </div>
+    </form><br/>
 
     {% if results %}
         <i>{{ results|length }} result(s)</i>
