@@ -347,7 +347,6 @@ def getBooksDetail(bookName):
         } GROUP BY ?resume
         LIMIT 1
     """)
-    #à ajouter à la requête -> FILTER(regex(?titre, """ + rgxqry + """, "i"))
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
 
@@ -478,6 +477,48 @@ def getBooks(bookName):
             FILTER(regex(?title, """ + rgxqry + """, "i"))
         }
         LIMIT 50
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+
+    return(results["results"]["bindings"])
+
+def getBookDetailBnf(bookName):
+    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
+    
+    rgxqry = '".*{0}.*"'.format(bookName)
+    
+    sparql.setQuery("""
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+        PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
+        
+        SELECT DISTINCT ?titre ?authorNameBnf ?birth ?death ?publicationDate ?publicateur ?pages ?langue ?resume
+        WHERE {
+            ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
+			dcterms:creator ?author ;
+            rdfs:label ?titre ;
+            dcterms:date ?publicationDate.
+            OPTIONAL { ?book dcterms:language ?langueUri. 
+                       ?langueUri <http://www.w3.org/2004/02/skos/core#altLabel> ?langue }
+            
+  			?publication rdam:P30135 ?book ;
+            dcterms:publisher ?publicateur ;
+            dcterms:date ?publicationDate.
+            OPTIONAL { ?publication dcterms:description ?pages }
+  			OPTIONAL { ?publication dcterms:abstract ?resume }
+            
+            ?author rdf:type foaf:Person ;
+            foaf:name ?authorNameBnf ;
+            bnf-onto:firstYear ?birth.
+            OPTIONAL { ?author bnf-onto:lastYear ?death }
+            FILTER(regex(?titre, """ + rgxqry + """, "i"))
+        }
+        LIMIT 1
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
