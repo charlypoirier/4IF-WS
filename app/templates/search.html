@@ -4,22 +4,30 @@
 
 {% block content %}
 
-    <form action="/search" method="POST">
-        <div class="text-center">
-            <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search...">
+    <div class="jumbotron">
+        <h1 class="display-4">Il était une fois...</h1>
+        <p class="lead">
+            LitteraSearch, un moteur de recherche sémantique sur le thème de la littérature française.</p>
+       
+        <hr class="my-4">
+
+        <form action="/search" method="POST">
+            <input class="form-control form-control-lg mb-2 shadow" type="text" name="query" placeholder="Search...">
 
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="searchType" id="radioAuthors" value="author" checked>
-                <label class="form-check-label" for="radioAuthors">Authors</label>
+                <label class="form-check-label" for="radioAuthors">Auteurs</label>
             </div>
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="searchType" id="radioBooks" value="book">
-                <label class="form-check-label" for="radioBooks">Books</label>
+                <label class="form-check-label" for="radioBooks">Livres</label>
             </div>
 
-            <input class="btn btn-primary" type="submit" value="Search">
-        </div>
-    </form><br/>
+            <input class="btn btn-success float-right" type="submit" value="Rechercher">
+        </form>
+    </div>
+
+  
 
     {% if results %}
         <i>{{ results|length }} result(s)</i>
