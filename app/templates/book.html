@@ -14,7 +14,7 @@
                     (par {{ details["authorNameBnf"]["value"] }})
                 {% endif %}
                 {% if "authorName" in details %}
-                    (by <a href = "/author/{{details['authorName']['value']}}?dBirth={{details['authorBirth']['value'][0]}}">{{ details["authorName"]["value"] }}</a>)
+                    (par <a href = "/author/{{details['authorName']['value']}}?dBirth={{details['authorBirth']['value'][0]}}">{{ details["authorName"]["value"] }}</a>)
                 {% endif %}
                 {% if "oeuvre" in details %}
                     <a class="float-right" href="{{details['oeuvre']['value']}}">Show on DBpedia</a>
