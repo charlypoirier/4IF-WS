@@ -354,20 +354,14 @@ def getBooks(bookName):
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
         
-        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language ?sumup ?uri
+        SELECT ?uri (SAMPLE(?title) as ?title) (SAMPLE(?date) AS ?publicationDate)  (SAMPLE(?authorName) AS ?authorName) 
         WHERE {
             ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
 			dcterms:creator ?author ;
             rdfs:label ?title ;
-            dcterms:date ?publicationDate.
+            dcterms:date ?date.
             ?uri foaf:focus ?book.
             OPTIONAL { ?book dcterms:language ?language }
-            
-  			?publication rdam:P30135 ?book ;
-            dcterms:publisher ?publisher ;
-            dcterms:date ?publicationDate.
-            OPTIONAL { ?publication dcterms:description ?pages }
-  			OPTIONAL { ?publication dcterms:abstract ?sumup }
             
             ?author rdf:type foaf:Person ;
             foaf:name ?authorName ;
@@ -375,6 +369,8 @@ def getBooks(bookName):
             OPTIONAL { ?author bnf-onto:lastYear ?death }
             FILTER(regex(?title, """ + rgxqry + """, "i"))
         }
+        GROUP BY ?uri ?date
+        ORDER BY ASC(?date)
         LIMIT 50
     """)
     sparql.setReturnFormat(JSON)
