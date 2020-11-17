@@ -61,24 +61,6 @@ def oeuvreSparql(authorName):
         
     return oeuvres
 
-# Nombre total d'éditions d'oeuvres d'un auteur
-
-#PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-#PREFIX dcterms: <http://purl.org/dc/terms/>
-#PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-#PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
-#SELECT (count(*) as ?count)
-#WHERE {
-#?a foaf:focus ?Oeuvre .
-#?Oeuvre dcterms:creator ?auteur .
-#?auteur foaf:name ?nom.
-#?edition rdarelationships:workManifested ?Oeuvre.
-#OPTIONAL{?edition dcterms:date ?date}
-#OPTIONAL{?edition dcterms:title ?titre}
-#OPTIONAL{?edition dcterms:publisher ?editeur}
-#Filter(regex(?nom, "Michel Houellebecq"))
-#} 
-
 #############################################
 # Auteurs avec noms 
 
@@ -100,60 +82,7 @@ def oeuvreSparql(authorName):
 #
 #}
 
-# PAGE DBPEDIA
-
-#PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-#PREFIX owl: <http://www.w3.org/2002/07/owl#>
-#PREFIX rdagroup2elements: <http://rdvocab.info/ElementsGr2/>
-#PREFIX bio: <http://vocab.org/bio/0.1/>
-#PREFIX dcterms: <http://purl.org/dc/terms/>
-#PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-#PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-#SELECT DISTINCT ?auteur ?nom ?external
-#WHERE {
-#?oeuvre dcterms:creator ?auteur.
-#?auteur rdf:type foaf:Person.
-#?auteur foaf:name ?nom.
-#OPTIONAL {?auteur owl:sameAs ?external 
-#    FILTER(regex(?external,".*dbpedia.org.*"))
-#  }
-#FILTER (regex(?nom, "Victor Hugo"))
-#}
-
-# Requête pour obtenir une liste d'auteurs selon des mots-clés
-def getAuteurs(authorName):
-    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
-    
-    rgxqry = '".*{0}.*"'.format(authorName)
-    
-    sparql.setQuery("""
-        PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX rdagroup2elements: <http://rdvocab.info/ElementsGr2/>
-        PREFIX bio: <http://vocab.org/bio/0.1/>
-        PREFIX dcterms: <http://purl.org/dc/terms/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
-        SELECT DISTINCT ?nom ?birth ?death ?bio (count(?edition) as ?count)
-        WHERE {
-            ?oeuvre dcterms:creator ?auteur.
-            ?auteur rdf:type foaf:Person ;
-            foaf:name ?nom ;
-            bnf-onto:firstYear ?birth ;
-            bnf-onto:lastYear ?death ;
-            rdagroup2elements:biographicalInformation ?bio.
-            ?a foaf:focus ?oeuvre .
-            ?edition rdarelationships:workManifested ?oeuvre.
-            FILTER(regex(?nom, """ + rgxqry + """, "i"))
-        }
-        ORDER BY DESC(?count)
-        LIMIT 500
-    """)
-    sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-
-    return(results["results"]["bindings"])
-    
+   
 # Requête pour obtenir les détails d'un auteur
 def getAuthorsDetail(authorName, dateBirth):
     sparql = SPARQLWrapper("https://dbpedia.org/sparql")
