@@ -28,34 +28,6 @@ def hugo_sample_req():
 #namesresults = hugo_sample_req()
 #print(namesresults)
 
-def generic(name):
-    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
-    
-    rgxqry = '".*{0}.*"'.format(name)
-    
-    sparql.setQuery("""
-        PREFIX bio: <http://vocab.org/bio/0.1/>
-        PREFIX dcterms: <http://purl.org/dc/terms/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-        SELECT distinct ?nom ?auteur ?birth
-        WHERE {
-            ?oeuvre dcterms:creator ?auteur.
-            ?auteur bio:birth ?birth ;
-            foaf:name ?nom.
-            FILTER(regex(?nom, """ + rgxqry + """, "i"))
-        }
-        LIMIT 100
-    """)
-    sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-
-    names = []
-    #return results["results"]["bindings"] 
-    for result in results["results"]["bindings"]:
-        names.append(result["nom"]["value"])
-    return names
-
 def oeuvreSparql(authorName):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
@@ -156,14 +128,11 @@ def getAuteurs(authorName):
     
     sparql.setQuery("""
         PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
         PREFIX rdagroup2elements: <http://rdvocab.info/ElementsGr2/>
         PREFIX bio: <http://vocab.org/bio/0.1/>
         PREFIX dcterms: <http://purl.org/dc/terms/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
         SELECT DISTINCT ?nom ?birth ?death ?bio (count(?edition) as ?count)
         WHERE {
@@ -565,14 +534,3 @@ def getAuteurs2(authorName):
 """ print("Test de la seconde méthode get auteur ")
 r = getAuteurs2('Stendhal')
 print(r) """
-
-#trucs intéressants pour recherche de livres
-
-#genre : Te -> oeuvre textuelle rdaw:P10004 rdf:resource="http://data.bnf.fr/vocabulary/work-form/te"
-# rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
-
-#date de publication -> dcterms:date
-#titre de l'oeuvre -> rdfs:label
-#auteur -> dcterms:creator
-#dcterms:language
-#éditeur
