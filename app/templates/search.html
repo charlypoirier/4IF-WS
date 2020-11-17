@@ -4,24 +4,29 @@
 
 {% block content %}
 
-    <div class="row">
-        <div class="col">
-            <form action="/search" method="POST">
-                <div class="text-center">
-                    <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search writers">
-                    <input class="btn btn-primary" type="submit" value="Search!">
-                </div>
-            </form><br/>
-        </div>
-        <div class="col">
-            <form action="/search/books" method="POST">
-                <div class="text-center">
-                    <input class="form-control mb-2" width="100px" type="text" name="query" placeholder="Search books">
-                    <input class="btn btn-primary" type="submit" value="Search!">
-                </div>
-            </form><br/>
-        </div>
+    <div class="jumbotron">
+        <h1 class="display-4">Il était une fois...</h1>
+        <p class="lead">
+            LitteraSearch, un moteur de recherche sémantique sur le thème de la littérature française.</p>
+        <hr class="my-4">
+
+        <form action="/search" method="POST">
+            <input class="form-control form-control-lg mb-2 shadow" type="text" name="query" placeholder="Mots-clés...">
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchType" id="radioAuthors" value="author" checked>
+                <label class="form-check-label" for="radioAuthors">Auteurs</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchType" id="radioBooks" value="book">
+                <label class="form-check-label" for="radioBooks">Livres</label>
+            </div>
+
+            <input class="btn btn-success float-right" type="submit" value="Rechercher">
+        </form>
     </div>
+
+  
 
     {% if results %}
         <i>{{ results|length }} result(s)</i>
@@ -40,9 +45,8 @@
                     <h5 class="card-title">{{ item["title"]["value"] }}</h5>
                     <i class="card-text">{{item["authorName"]["value"] }}</i><br/>
                     <i class="card-text">{{item["publicationDate"]["value"] }}</i><br/>
-                    <a href="/ABook/{{ item['title']['value'] }}?nom={{item['authorName']['value'] }}" class="card-link">Consulter</a>
+                    <a href="/ABookBnf/{{ item['title']['value'].replace(' ','_') }}" class="card-link">Consulter</a>
                     {% endif %}
-
                 </div>
             </div><br/>
         {% endfor %}

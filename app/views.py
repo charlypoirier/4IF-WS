@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import hugo_sample_req, generic, getBooksDetail, getBooks, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors, getAuteurs2
+from .bnf_requests import getBookDetailBnf, getBooksDetail, getBooks, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors, getAuteurs2
 
 # Page principale avec la recherche générique
 @app.route("/")
@@ -10,19 +10,15 @@ def root():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    auteurs = []
+    results = []
     if request.method == "POST":
+        searchType = request.form.get("searchType")
         query = request.form.get("query")
-        auteurs = getAuteurs2(query)
-    return render_template("search.html", results=auteurs, type="author")
-
-@app.route("/search/books", methods=["GET", "POST"])
-def searchBooks():
-    auteurs = []
-    if request.method == "POST":
-        query = request.form.get("query")
-        livres = getBooks(query)
-    return render_template("search.html", results=livres, type="book")
+        if searchType == "author":
+            results = getAuteurs2(query)
+        else:
+            results = getBooks(query)
+    return render_template("search.html", results=results, type=searchType)
 
 # Page de détails d'un auteur
 @app.route("/author/<name>")
@@ -44,6 +40,18 @@ def bookDetail(titre):
     name = titre
     name = name.replace('_', ' ')
     results = getBooksDetail(name)
+    if len(results) == 0:
+        results = [{}]
+    return render_template("book.html", details=results[0], name=name)
+
+# Page de détails d'un livre
+@app.route("/ABookBnf/<titre>")
+def bookDetailBnf(titre):
+    name = titre
+    name = name.replace('_', ' ')
+    results = getBookDetailBnf(name)
+    print( "bookDetailBnfStart" )
+    print(results)
     if len(results) == 0:
         results = [{}]
     return render_template("book.html", details=results[0], name=name)
