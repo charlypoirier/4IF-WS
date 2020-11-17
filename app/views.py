@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, jsonify
 from SPARQLWrapper import SPARQLWrapper, JSON
-from .bnf_requests import getBookDetailBnf, getBooksDetail, getBooks, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors, getAuteurs2
+from .bnf_requests import getBookDetailBnf, getBooksDetail, getBooks, getAuthorsDetail, getAuthorsBooks, getRelatedAuthors, getAuteurs2, getResumeBnfUri
 
 # Page principale avec la recherche générique
 @app.route("/")
@@ -53,9 +53,11 @@ def bookDetailBnf(titre):
     if "uri" in request.args:
         bookURI = request.args["uri"]
     results = getBookDetailBnf(name, bookURI)
-    print( "bookDetailBnfStart" )
-    print(results)
     if len(results) == 0:
         results = [{}]
+    else:
+        abstractdict =  { "value" : getResumeBnfUri(bookURI)}
+        results[0]["resume"] = abstractdict
+    print( "bookDetailBnfStart" )
+    print(results)
     return render_template("book.html", details=results[0], name=name)
-

@@ -47,15 +47,16 @@
                 {% endif %}
 
                 {% if "publicateur" in details %}
-                    <h5 class="card-title">Publié par</h5>
+                    <h5 class="card-title">Publication</h5>
                     <p>{{ details["publicateur"]["value"] }}</p>
                 {% endif %}
 
-                {% if "publicationDate" in details %}
+                <!--
+                {# if "publicationDate" in details %}
                 <h5 class="card-title">Publié le</h5>
-                    <p>{{ details["publicationDate"]["value"] }}</p>
-                {% endif %}
-                
+                    <p>{{ # details["publicationDate"]["value"] }}</p>
+                {% endif #}
+                -->
             </div>
         </div>
 

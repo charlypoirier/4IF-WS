@@ -383,39 +383,73 @@ def getBookDetailBnf(bookName, uri):
     
     rgxqry = '".*{0}.*"'.format(bookName)
     
-    sparql.setQuery("""
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX dcterms: <http://purl.org/dc/terms/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
-        PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
+   # sparql.setQuery("""
+   #     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+   #     PREFIX dcterms: <http://purl.org/dc/terms/>
+   #     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+   #     PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+   #     PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+   #     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+   #     	PREFIX rdam: <http://rdaregistry.info/Elements/m/>
+   #     
+   #     SELECT DISTINCT ?titre ?authorNameBnf ?birth ?death ?publicationDate ?publicateur ?pages ?langue ?resume
+   #     WHERE {
+   #         <""" + uri + """> foaf:focus ?book.
+   #         ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
+   #         
+   #     		dcterms:creator ?author ;
+   #         rdfs:label ?titre ;
+   #         dcterms:date ?publicationDate.
+   #         OPTIONAL { ?book dcterms:language ?langueUri. 
+   #                    ?langueUri <http://www.w3.org/2004/02/skos/core#altLabel> ?langue }
+   #         
+   #     		?publication rdam:P30135 ?book .
+   #         OPTIONAL {?publication dcterms:publisher ?publicateur }
+   #         OPTIONAL {?publication dcterms:date      ?publicationDate}
+   #         OPTIONAL { ?publication dcterms:description ?pages }
+   #     		OPTIONAL { ?publication dcterms:abstract ?resume }
+   #         
+   #         ?author rdf:type foaf:Person ;
+   #         foaf:name ?authorNameBnf ;
+   #         bnf-onto:firstYear ?birth.
+   #         OPTIONAL { ?author bnf-onto:lastYear ?death }
+   #     }
+   #     ORDER BY ASC (?publicationDate)
+   #     LIMIT 1
+   # """)
+    sparql.setQuery(""" 
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdam: <http://rdaregistry.info/Elements/m/>
+    PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+     
+    SELECT DISTINCT  ?titre ?authorNameBnf ?birth ?death ?publicationDate ?publicateur ?pages ?langue ?resume
+    WHERE {
         
-        SELECT DISTINCT ?titre ?authorNameBnf ?birth ?death ?publicationDate ?publicateur ?pages ?langue ?resume
-        WHERE {
-            <""" + uri + """> foaf:focus ?book.
-            ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
+        <""" + uri + """> foaf:focus ?Oeuvre .
+        ?edition    rdarelationships:workManifested ?Oeuvre.
+        ?Oeuvre     dcterms:creator     ?author.
+        ?author     foaf:name           ?authorNameBnf.
+        ?edition    dcterms:date        ?publicationDate.
+        ?author     bnf-onto:firstYear  ?birth.
+        OPTIONAL {?edition  dcterms:language    ?langueUri. ?langueUri <http://www.w3.org/2004/02/skos/core#altLabel> ?langue }
+        OPTIONAL {?author   bnf-onto:lastYear   ?death      }
+        OPTIONAL {?edition  dcterms:title       ?titre      }
+        OPTIONAL {?edition  dcterms:publisher   ?publicateur}
+        OPTIONAL {?edition  dcterms:abstract    ?resume     }
+        OPTIONAL {?edition  dcterms:description ?pages      }
             
-			dcterms:creator ?author ;
-            rdfs:label ?titre ;
-            dcterms:date ?publicationDate.
-            OPTIONAL { ?book dcterms:language ?langueUri. 
-                       ?langueUri <http://www.w3.org/2004/02/skos/core#altLabel> ?langue }
-            
-  			?publication rdam:P30135 ?book ;
-            dcterms:publisher ?publicateur ;
-            dcterms:date ?publicationDate.
-            OPTIONAL { ?publication dcterms:description ?pages }
-  			OPTIONAL { ?publication dcterms:abstract ?resume }
-            
-            ?author rdf:type foaf:Person ;
-            foaf:name ?authorNameBnf ;
-            bnf-onto:firstYear ?birth.
-            OPTIONAL { ?author bnf-onto:lastYear ?death }
-        }
-        ORDER BY ASC (?publicationDate)
-        LIMIT 1
+            FILTER (regex(?publicationDate,"^[0-9]+$"))
+            } 
+
+            ORDER BY (?publicationDate)
+            LIMIT 100
+        
     """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
@@ -458,6 +492,45 @@ def getAuteurs2(authorName):
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
     return(results["results"]["bindings"])
+
+
+def getResumeBnfUri(uri): 
+    sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
+
+    sparql.setQuery("""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+    PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdam: <http://rdaregistry.info/Elements/m/>
+    PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
+    SELECT ?resume 
+    WHERE {
+    <""" + uri + """>   foaf:focus ?book.
+    ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te>.
+    ?book rdfs:label ?titre.
+    ?publication rdam:P30135 ?book.
+    ?publication dcterms:abstract ?resume 
+    }
+    ORDER BY DESC (strlen(str(?resume)))
+    LIMIT 1
+    """)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    if(len(results["results"]["bindings"]) == 0):
+        return ""
+    else:
+        return(results["results"]["bindings"][0]["resume"]["value"])
+
+resume = getResumeBnfUri("http://data.bnf.fr/ark:/12148/cb119526826")
+print(resume)
+
+
+
+
+
 
 """ print("Test de la seconde méthode get auteur ")
 r = getAuteurs2('Stendhal')
