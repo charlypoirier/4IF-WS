@@ -49,19 +49,13 @@ def bookDetail(titre):
 def bookDetailBnf(titre):
     name = titre
     name = name.replace('_', ' ')
-    results = getBookDetailBnf(name)
+    bookURI = ""
+    if "uri" in request.args:
+        bookURI = request.args["uri"]
+    results = getBookDetailBnf(name, bookURI)
     print( "bookDetailBnfStart" )
     print(results)
     if len(results) == 0:
         results = [{}]
     return render_template("book.html", details=results[0], name=name)
 
-# Page de détails d'un livre - Test
-@app.route("/book")
-def book():
-    name = "La Peste"
-    name = name.replace('_', ' ')
-    results = getBooksDetail(name)
-    if len(results) == 0:
-        results = [{}]
-    return render_template("book.html", details=results[0], name=name)

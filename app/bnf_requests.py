@@ -425,12 +425,13 @@ def getBooks(bookName):
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		PREFIX rdam: <http://rdaregistry.info/Elements/m/>
         
-        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language ?sumup
+        SELECT DISTINCT ?title ?authorName ?birth ?death ?publicationDate ?publisher ?pages ?language ?sumup ?uri
         WHERE {
             ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
 			dcterms:creator ?author ;
             rdfs:label ?title ;
             dcterms:date ?publicationDate.
+            ?uri foaf:focus ?book.
             OPTIONAL { ?book dcterms:language ?language }
             
   			?publication rdam:P30135 ?book ;
@@ -452,7 +453,7 @@ def getBooks(bookName):
 
     return(results["results"]["bindings"])
 
-def getBookDetailBnf(bookName):
+def getBookDetailBnf(bookName, uri):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
     
     rgxqry = '".*{0}.*"'.format(bookName)
@@ -468,7 +469,9 @@ def getBookDetailBnf(bookName):
         
         SELECT DISTINCT ?titre ?authorNameBnf ?birth ?death ?publicationDate ?publicateur ?pages ?langue ?resume
         WHERE {
+            <""" + uri + """> foaf:focus ?book.
             ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
+            
 			dcterms:creator ?author ;
             rdfs:label ?titre ;
             dcterms:date ?publicationDate.
@@ -485,8 +488,8 @@ def getBookDetailBnf(bookName):
             foaf:name ?authorNameBnf ;
             bnf-onto:firstYear ?birth.
             OPTIONAL { ?author bnf-onto:lastYear ?death }
-            FILTER(regex(?titre, """ + rgxqry + """, "i"))
         }
+        ORDER BY ASC (?publicationDate)
         LIMIT 1
     """)
     sparql.setReturnFormat(JSON)

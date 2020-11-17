@@ -45,7 +45,7 @@
                     <h5 class="card-title">{{ item["title"]["value"] }}</h5>
                     <i class="card-text">{{item["authorName"]["value"] }}</i><br/>
                     <i class="card-text">{{item["publicationDate"]["value"] }}</i><br/>
-                    <a href="/ABookBnf/{{ item['title']['value'].replace(' ','_') }}" class="card-link">Consulter</a>
+                    <a href="/ABookBnf/{{ item['title']['value'].replace(' ','_') }}?uri={{ item['uri']['value'] }}" class="card-link">Consulter</a>
                     {% endif %}
                 </div>
             </div><br/>
