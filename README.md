@@ -13,13 +13,13 @@ Clonez le repot :
 
 Déplacez vous deans la racine du projet, puis créez un environnement virtuel  
 ```python3 -m venv env```    
-Lancez l'environnement virtuel
+Lancez l'environnement virtuel  
 ``` source env/bin/activate ```  
 
 Une indication visuelle doit apparaître dans votre terminal, par exemple avec bash le nom de l'environnement entre parenthèse au début de la ligne.
 
-Installez les packages Flask et SPARQLWrapper :
-` pip install Flask `
+Installez les packages Flask et SPARQLWrapper :  
+` pip install Flask `  
 ` pip install SPARQLWrapper `
 
 Lorques vous aurez fini d'utiliser l'application, tapez ` deactivate ` pour sortir de l'environnement virtuel.
@@ -38,12 +38,16 @@ Pour lancer l'application, vous pouvez simplement exécuter le script **runserve
 
 Si pour une raison quelquonque cela ne marque pas : 
 
-- Exportez les variables d'environnement FLASK_APP et FLASK_ENV. 
+- Exportez les variables d'environnement FLASK_APP et FLASK_ENV.  
 ` export FLASK_APP=run.py `  
 ` export FLASK_ENV=development `  
 
-- Lancez l'application avec la commande :  
+- Lancez l'application avec la commande suivante :  
 `flask run` 
+
+## Voir aussi 
+- [FLask (Création d'un environnement virtuel, téléchargement de Flask)](https://flask.palletsprojects.com/en/1.1.x/installation/): 
+- [SPARQLWrapper](https://sparqlwrapper.readthedocs.io/en/latest/main.html)
 
 ## Contact
 Hexanome 4414 :
@@ -53,5 +57,6 @@ Hexanome 4414 :
 - Yohan Meyer
 - Charly Poirier
 - Quentin Regaud
+
 
 
