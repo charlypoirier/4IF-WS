@@ -58,6 +58,5 @@ def bookDetailBnf(titre):
     else:
         abstractdict =  { "value" : getResumeBnfUri(bookURI)}
         results[0]["resume"] = abstractdict
-    print( "bookDetailBnfStart" )
-    print(results)
     return render_template("book.html", details=results[0], name=name)
+

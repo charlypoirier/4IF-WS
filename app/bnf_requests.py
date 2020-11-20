@@ -20,13 +20,10 @@ def hugo_sample_req():
     results = sparql.query().convert()
 
     names = []
-    #return results["results"]["bindings"] 
     for result in results["results"]["bindings"]:
         names.append(result["nom"]["value"])
     return names
 
-#namesresults = hugo_sample_req()
-#print(namesresults)
 
 def oeuvreSparql(authorName):
     sparql = SPARQLWrapper("https://data.bnf.fr/sparql")
@@ -60,27 +57,6 @@ def oeuvreSparql(authorName):
         oeuvres.append(result["language"]["value"])
         
     return oeuvres
-
-#############################################
-# Auteurs avec noms 
-
-#PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-#PREFIX owl: <http://www.w3.org/2002/07/owl#>
-#PREFIX rdagroup2elements: <http://rdvocab.info/ElementsGr2/>
-#PREFIX bio: <http://vocab.org/bio/0.1/>
-#PREFIX dcterms: <http://purl.org/dc/terms/>
-#PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-#PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-#SELECT DISTINCT ?auteur ?nom ?external
-#WHERE {
-#?oeuvre dcterms:creator ?auteur.
-#?auteur rdf:type foaf:Person.
-#?auteur foaf:name ?nom.
-##?auteur rdagroup2elements:biographicalInformation ?bio .
-##OPTIONAL {?auteur owl:sameAs ?external }
-#FILTER (regex(?nom, "Victor Hugo"))
-#
-#}
 
    
 # Requête pour obtenir les détails d'un auteur
@@ -383,40 +359,6 @@ def getBookDetailBnf(bookName, uri):
     
     rgxqry = '".*{0}.*"'.format(bookName)
     
-   # sparql.setQuery("""
-   #     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-   #     PREFIX dcterms: <http://purl.org/dc/terms/>
-   #     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-   #     PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
-   #     PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
-   #     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-   #     	PREFIX rdam: <http://rdaregistry.info/Elements/m/>
-   #     
-   #     SELECT DISTINCT ?titre ?authorNameBnf ?birth ?death ?publicationDate ?publicateur ?pages ?langue ?resume
-   #     WHERE {
-   #         <""" + uri + """> foaf:focus ?book.
-   #         ?book rdaw:P10004 <http://data.bnf.fr/vocabulary/work-form/te> ;
-   #         
-   #     		dcterms:creator ?author ;
-   #         rdfs:label ?titre ;
-   #         dcterms:date ?publicationDate.
-   #         OPTIONAL { ?book dcterms:language ?langueUri. 
-   #                    ?langueUri <http://www.w3.org/2004/02/skos/core#altLabel> ?langue }
-   #         
-   #     		?publication rdam:P30135 ?book .
-   #         OPTIONAL {?publication dcterms:publisher ?publicateur }
-   #         OPTIONAL {?publication dcterms:date      ?publicationDate}
-   #         OPTIONAL { ?publication dcterms:description ?pages }
-   #     		OPTIONAL { ?publication dcterms:abstract ?resume }
-   #         
-   #         ?author rdf:type foaf:Person ;
-   #         foaf:name ?authorNameBnf ;
-   #         bnf-onto:firstYear ?birth.
-   #         OPTIONAL { ?author bnf-onto:lastYear ?death }
-   #     }
-   #     ORDER BY ASC (?publicationDate)
-   #     LIMIT 1
-   # """)
     sparql.setQuery(""" 
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -524,14 +466,9 @@ def getResumeBnfUri(uri):
     else:
         return(results["results"]["bindings"][0]["resume"]["value"])
 
-resume = getResumeBnfUri("http://data.bnf.fr/ark:/12148/cb119526826")
-print(resume)
 
 
 
 
 
 
-""" print("Test de la seconde méthode get auteur ")
-r = getAuteurs2('Stendhal')
-print(r) """
