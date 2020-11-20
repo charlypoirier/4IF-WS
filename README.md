@@ -2,30 +2,56 @@
 Projet 4IF - Web sémantique - Moteur de recherche sémantique sur le thème de la littérature
 
 
-### Installation d'un environnement virtuel
-Placez vous dans 4IF-WS.
+## Prérequis
 
-Créer un environnement virtuel  
-```python -m venv env```   
-Lancer l'environnement virtuel  
+L'application nécessite python >= 3.8 .
+
+## Installation avec un environnement virtuel
+
+Clonez le repot :  
+`git clone https://github.com/charlypoirier/4IF-WS.git `
+
+Déplacez vous deans la racine du projet, puis créez un environnement virtuel  
+```python3 -m venv env```    
+Lancez l'environnement virtuel
 ``` source env/bin/activate ```  
 
-Une indication visuelle doit apparaître dans votre terminal.
+Une indication visuelle doit apparaître dans votre terminal, par exemple avec bash le nom de l'environnement entre parenthèse au début de la ligne.
 
-Tapez ``` deactivate ``` pour sortir de l'environnement virtuel.
+Installez les packages Flask et SPARQLWrapper :
+` pip install Flask `
+` pip install SPARQLWrapper `
 
-### Lancement  
-## Méthode 1
-Une fois l'environnement vrituel activé,
-exporter les variables d'environnement suivantes :  
+Lorques vous aurez fini d'utiliser l'application, tapez ` deactivate ` pour sortir de l'environnement virtuel.
+
+
+## Installation sans environnement virtuel
+
+Installez les packages SPARQLWrapper et FLASK :   
+` pip install Flask `  
+` pip install SPARQLWrapper `
+
+## Lancement  
+
+Pour lancer l'application, vous pouvez simplement exécuter le script **runserver** depuis la racine du projet :
+`./runserver`
+
+Si pour une raison quelquonque cela ne marque pas : 
+
+- Exportez les variables d'environnement FLASK_APP et FLASK_ENV. 
 ` export FLASK_APP=run.py `  
 ` export FLASK_ENV=development `  
 
-Lancer depuis le répertoire parent de app avec la commande :  
+- Lancez l'application avec la commande :  
 `flask run` 
 
-## Méthode 2
-Une fois l'environnement vrituel activé,
-exécutez le script *runserver* : 
-``` ./runserver ```
+## Contact
+Hexanome 4414 :
+- Lucie Clémenceau
+- Sylvain de Verclos
+- Jérôme Hue
+- Yohan Meyer
+- Charly Poirier
+- Quentin Regaud
+
 
